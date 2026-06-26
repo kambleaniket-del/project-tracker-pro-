@@ -1232,6 +1232,74 @@ button.btn:disabled:hover{background:var(--card);border-color:var(--border);}
 
 // ====== CONSTANTS ======
 const STORAGE_KEY='tracker:data',LAST_BACKUP_KEY='tracker:lastBackup';
+
+// ══════════════════════════════════════════════════════════════════
+// SHARED SYNC ENGINE — GitHub Gist Storage
+// All users read/write the same Gist → shared live data
+// Config: set GIST_ID and GIST_TOKEN below
+// ══════════════════════════════════════════════════════════════════
+const SYNC_CONFIG = {
+  // Replace these two values after setup (see README)
+  GIST_ID:    'b70af251c34278dac0dcf7055c475b50',    // e.g. 'a1b2c3d4e5f6...'
+  GIST_TOKEN: localStorage.getItem('ptp_gist_token') || '', // GitHub PAT with gist scope
+  FILE:       'ptp_state.json',
+  ENABLED:    false, // set true after adding ID and TOKEN above
+};
+
+// Auto-enable if both values are filled
+if (SYNC_CONFIG.GIST_ID && SYNC_CONFIG.GIST_TOKEN) {
+  SYNC_CONFIG.ENABLED = true;
+}
+
+async function gistLoad() {
+  if (!SYNC_CONFIG.ENABLED) return null;
+  const r = await fetch(`https://api.github.com/gists/${SYNC_CONFIG.GIST_ID}`, {
+    headers: {
+      'Authorization': 'Bearer ' + SYNC_CONFIG.GIST_TOKEN,
+      'Accept': 'application/vnd.github+json',
+    }
+  });
+  if (!r.ok) throw new Error('Gist load failed: ' + r.status);
+  const data = await r.json();
+  const content = data.files?.[SYNC_CONFIG.FILE]?.content;
+  if (!content) return null;
+  return JSON.parse(content);
+}
+
+async function gistSave(state) {
+  if (!SYNC_CONFIG.ENABLED) return false;
+  const body = { files: {} };
+  body.files[SYNC_CONFIG.FILE] = { content: JSON.stringify(state) };
+  const r = await fetch(`https://api.github.com/gists/${SYNC_CONFIG.GIST_ID}`, {
+    method: 'PATCH',
+    headers: {
+      'Authorization': 'Bearer ' + SYNC_CONFIG.GIST_TOKEN,
+      'Content-Type': 'application/json',
+      'Accept': 'application/vnd.github+json',
+    },
+    body: JSON.stringify(body)
+  });
+  return r.ok;
+}
+
+function updateSyncBadge(status) {
+  const dot = document.getElementById('mongoDot');
+  const lbl = document.getElementById('mongoLbl');
+  if (!dot || !lbl) return;
+  const states = {
+    loading: ['sync', 'Loading…'],
+    saving:  ['sync', 'Saving…'],
+    ok:      ['',     'Gist ✓'],
+    offline: ['off',  'Local only'],
+    error:   ['off',  'Sync error'],
+    disabled:['off',  'Local mode'],
+  };
+  const [cls, text] = states[status] || states.disabled;
+  dot.className = 'mongo-dot' + (cls ? ' ' + cls : '');
+  lbl.textContent = text;
+}
+// ══════════════════════════════════════════════════════════════════
+
 const AXIS_H=44,COMMENTS_H=34,HEADER_H=AXIS_H+COMMENTS_H,ROW_H=36;
 const SVG_NS='http://www.w3.org/2000/svg';
 const COMMENT_COLORS=['#3B82F6','#10B981','#F59E0B','#8B5CF6','#EC4899','#0EA5E9','#84CC16','#F97316'];
@@ -1461,7 +1529,30 @@ async function loadState(){
     checkBackupNag();return;
   }
   try{
-    const res=await fetch('/api/state');
+    // Gist sync load
+    updateSyncBadge('loading');
+    const gistData = await gistLoad().catch(e => { console.warn('Gist load error:', e); return null; });
+    if (gistData && gistData.projects && Array.isArray(gistData.projects)) {
+      state.projects = gistData.projects.map(p => { migrateProject(p); return p; });
+      state.globalResources = gistData.globalResources || [];
+      state.activeId = gistData.activeId || (state.projects[0]?.id || null);
+      state.activeView = gistData.activeView || 'gantt';
+      state.zoom = gistData.zoom || 'week';
+      state.sortBy = gistData.sortBy || 'manual';
+      state.showBaseline = gistData.showBaseline || false;
+      state.showCritical = gistData.showCritical || false;
+      state.showExpected = gistData.showExpected !== false;
+      state.calMonth = gistData.calMonth || null;
+      state.autoSchedule = gistData.autoSchedule || false;
+      if (!state.activeId && state.projects.length) state.activeId = state.projects[0].id;
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify({...state})); } catch(e) {}
+      if (ind) ind.textContent = 'loaded';
+      updateSyncBadge(SYNC_CONFIG.ENABLED ? 'ok' : 'disabled');
+      checkBackupNag(); renderAll(); return;
+    }
+    // Gist empty or failed — use localStorage / seed data
+    updateSyncBadge(SYNC_CONFIG.ENABLED ? 'error' : 'disabled');
+    const res=await fetch('/api/state').catch(()=>({status:500,ok:false}));
     // 404 = server up but no data yet → treat as fresh start, not error
     if(res.status===404){if(!state.projects.length){
     const _s="{\"projects\": [{\"id\": \"proj_g2injpn\", \"name\": \"AID - Overboost\", \"tasks\": [{\"id\": \"task_wz9w7o1\", \"name\": \"Scoping the Algo\", \"owner\": \"waquar\", \"status\": \"todo\", \"priority\": \"medium\", \"start\": \"2026-06-01\", \"end\": \"2026-06-07\", \"progress\": 0, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": null, \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}], \"comments\": [], \"resources\": [], \"customFields\": [], \"macros\": [], \"baselines\": [], \"crossDeps\": [], \"leaveCalendar\": {}}, {\"id\": \"proj_p92ei5j\", \"name\": \"Real time voltage Drop\", \"tasks\": [{\"id\": \"task_ulwffn1\", \"name\": \"Algo Changes\", \"owner\": \"Akshay Bhivagade\", \"status\": \"done\", \"priority\": \"high\", \"start\": \"2026-05-27\", \"end\": \"2026-06-01\", \"progress\": 100, \"deps\": [], \"notes\": \"1. Low bypass filter for both EBV, IBV to be configurable\\n2. Add DC check\\n3. Time-based: at least 5 minutes\\n4. Check is_obd\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-01\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_ztx57sg\", \"name\": \"Combiner Changes\", \"owner\": \"Ayush Mandhana\", \"status\": \"progress\", \"priority\": \"high\", \"start\": \"2026-06-01\", \"end\": \"2026-06-05\", \"progress\": 95, \"deps\": [], \"notes\": \"1. Works tag and without tag\\n2. No bat alert = no run\\n3. Add RVD OBD check\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-05\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_owqovse\", \"name\": \"UX Changes\", \"owner\": \"Anjali Pandey\", \"status\": \"todo\", \"priority\": \"high\", \"start\": \"2026-06-04\", \"end\": \"2026-06-10\", \"progress\": 0, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": null, \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_824ol1a\", \"name\": \"New UI Changes\", \"owner\": \"Anjali Pandey\", \"status\": \"risk\", \"priority\": \"high\", \"start\": \"2026-06-15\", \"end\": \"2026-06-17\", \"progress\": 0, \"deps\": [{\"taskId\": \"task_owqovse\", \"type\": \"FS\"}], \"notes\": \"\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": null, \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_snqfv2c\", \"name\": \"Final Release\", \"owner\": \"\", \"status\": \"progress\", \"priority\": \"medium\", \"start\": \"2026-06-18\", \"end\": \"2026-06-24\", \"progress\": 0, \"deps\": [{\"taskId\": \"task_824ol1a\", \"type\": \"FS\"}], \"notes\": \"\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-24\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_ixbcpat\", \"name\": \"Documentation\", \"owner\": \"Anjali Pandey\", \"status\": \"todo\", \"priority\": \"high\", \"start\": \"2026-06-04\", \"end\": \"2026-06-10\", \"progress\": 0, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"parentId\": \"task_owqovse\", \"assignedResources\": [{\"resourceId\": \"res_kwbk9xr\", \"allocation\": 100}], \"workHours\": null, \"customFieldValues\": {}, \"baselineStart\": null, \"baselineEnd\": null, \"isCollapsed\": false, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-12\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}], \"comments\": [], \"resources\": [{\"id\": \"res_pheg23k\", \"name\": \"Ayush Mandhana\", \"hoursPerDay\": 8, \"costPerHour\": 0, \"color\": \"#0369a1\", \"hrsPerDay\": 8, \"costPerHr\": 0, \"availableFrom\": null, \"availableTo\": null}, {\"id\": \"res_kwbk9xr\", \"name\": \"Anjali Pandey\", \"hoursPerDay\": 8, \"costPerHour\": 0, \"color\": \"#059669\", \"hrsPerDay\": 8, \"costPerHr\": 0, \"availableFrom\": null, \"availableTo\": null}, {\"id\": \"res_mjmvmzc\", \"name\": \"Akshay Bhivagade\", \"hoursPerDay\": 8, \"costPerHour\": 0, \"color\": \"#ea580c\", \"hrsPerDay\": 8, \"costPerHr\": 0, \"availableFrom\": null, \"availableTo\": null}], \"customFields\": [], \"macros\": [], \"baselines\": [], \"crossDeps\": [], \"leaveCalendar\": {}}, {\"id\": \"proj_1xk7dl8\", \"name\": \"CARB\", \"tasks\": [{\"id\": \"task_8xlqr44\", \"name\": \"Revisit Documentation & build Test Cases\", \"owner\": \"\", \"status\": \"progress\", \"priority\": \"medium\", \"start\": \"2026-05-26\", \"end\": \"2026-06-04\", \"progress\": 65, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"parentId\": null, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"baselineStart\": null, \"baselineEnd\": null, \"isCollapsed\": false, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-05\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_v67tt4d\", \"name\": \"CSV & XML New format\", \"owner\": \"\", \"status\": \"progress\", \"priority\": \"medium\", \"start\": \"2026-05-25\", \"end\": \"2026-06-05\", \"progress\": 55, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"parentId\": null, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"baselineStart\": null, \"baselineEnd\": null, \"isCollapsed\": false, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-04\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_ar5kmti\", \"name\": \"Preparation for Application Document\", \"owner\": \"\", \"status\": \"done\", \"priority\": \"medium\", \"start\": \"2026-05-25\", \"end\": \"2026-06-19\", \"progress\": 100, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"parentId\": null, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"baselineStart\": null, \"baselineEnd\": null, \"isCollapsed\": false, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-30\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_0h2y9f2\", \"name\": \"Submit Application\", \"owner\": \"\", \"status\": \"todo\", \"priority\": \"critical\", \"start\": \"2026-05-26\", \"end\": \"2026-06-30\", \"progress\": 0, \"deps\": [{\"taskId\": \"task_ar5kmti\", \"type\": \"FS\"}], \"notes\": \"\", \"isMilestone\": false, \"parentId\": null, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"baselineStart\": null, \"baselineEnd\": null, \"isCollapsed\": false, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-30\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}], \"comments\": [], \"resources\": [], \"customFields\": [], \"macros\": [], \"baselines\": [], \"crossDeps\": [], \"leaveCalendar\": {}}], \"activeId\": \"proj_p92ei5j\", \"activeView\": \"gantt\", \"zoom\": \"day\", \"sortBy\": \"end\", \"showBaseline\": true, \"showCritical\": true, \"showExpected\": true, \"calMonth\": \"2026-06\", \"globalResources\": [], \"showHistogram\": false, \"autoSchedule\": false, \"activeBaselineIdx\": 0}";
@@ -1580,10 +1671,17 @@ function saveState(){
     if(isLocalFile2){try{localStorage.setItem(STORAGE_KEY,JSON.stringify({...state,globalResources:state.globalResources||[]}));if(ind)ind.textContent='saved';broadcastState();}catch(ex){if(ind){ind.textContent='save failed';ind.classList.add('error');}}return;}
     try{
       const payload={...state,globalResources:state.globalResources||[]};
-      const res=await fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-      const json=await res.json();
-      if(json.ok){if(ind)ind.textContent='saved';broadcastState();}
-      else throw new Error(json.error||'Save failed');
+      updateSyncBadge('saving');
+      const saved = await gistSave(payload).catch(e => { console.warn('Gist save error:', e); return false; });
+      if (saved) {
+        if(ind)ind.textContent='saved';
+        updateSyncBadge('ok');
+        broadcastState();
+      } else {
+        // Fallback to localStorage
+        try { localStorage.setItem(STORAGE_KEY,JSON.stringify(payload)); if(ind)ind.textContent='saved (local)'; } catch(ex){}
+        updateSyncBadge(SYNC_CONFIG.ENABLED ? 'error' : 'disabled');
+      }
     }catch(e){
       // Silently fallback to localStorage for network errors
       try{localStorage.setItem(STORAGE_KEY,JSON.stringify({...state,globalResources:state.globalResources||[]}));if(ind)ind.textContent='saved (local)';}catch(ex){if(ind){ind.textContent='save failed';ind.classList.add('error');}}
@@ -5427,6 +5525,50 @@ function exportReportCSV() {
   }
 })();
 
+
+document.addEventListener('DOMContentLoaded', () => {
+  const badge = document.getElementById('mongoBadge');
+  if (badge) badge.addEventListener('click', () => { updateSyncBadge('loading'); loadState(); });
+  updateSyncBadge(SYNC_CONFIG.ENABLED ? 'loading' : 'disabled');
+});
+
+// First-run: prompt for token if not set
+(function ptpTokenSetup(){
+  document.addEventListener('DOMContentLoaded', () => {
+    const stored = localStorage.getItem('ptp_gist_token');
+    if (!stored) {
+      setTimeout(() => {
+        const badge = document.getElementById('mongoBadge');
+        if (badge) badge.style.cursor = 'pointer';
+        showTokenSetupToast();
+      }, 1500);
+    }
+  });
+
+  function showTokenSetupToast() {
+    // Show a non-blocking setup banner
+    const banner = document.createElement('div');
+    banner.id = 'ptpSetupBanner';
+    banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#1d4ed8;color:#fff;padding:10px 16px;font-family:Space Mono,monospace;font-size:11px;display:flex;align-items:center;gap:12px;';
+    banner.innerHTML = '<span>☁ <b>Enable shared sync?</b> Enter your GitHub token to share data with your team.</span><button onclick="ptpSetToken()" style="background:#fff;color:#1d4ed8;border:none;padding:4px 12px;border-radius:4px;font-family:inherit;font-size:10px;font-weight:700;cursor:pointer;">Setup Sync</button><button onclick="this.parentElement.remove()" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4);padding:4px 10px;border-radius:4px;font-family:inherit;font-size:10px;cursor:pointer;">Use Local Only</button>';
+    document.body.prepend(banner);
+  }
+})();
+
+function ptpSetToken() {
+  const token = prompt('Enter your GitHub Personal Access Token (gist scope):');
+  if (token && token.startsWith('ghp_')) {
+    localStorage.setItem('ptp_gist_token', token);
+    SYNC_CONFIG.GIST_TOKEN = token;
+    SYNC_CONFIG.ENABLED = !!(SYNC_CONFIG.GIST_ID && token);
+    document.getElementById('ptpSetupBanner')?.remove();
+    showToast('✓ Sync enabled! Reloading…', 'success');
+    setTimeout(() => location.reload(), 1200);
+  } else if (token !== null) {
+    alert('Invalid token — must start with ghp_');
+  }
+}
+
 </script>
 
 
@@ -5487,5 +5629,14 @@ function exportReportCSV() {
   ╚══════════════════════════════════════════════════════════════════╝
 -->
 
+
+<style>
+.mongo-badge{position:fixed;bottom:52px;left:14px;z-index:9999;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-family:'Space Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.05em;display:flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba(0,0,0,.15);color:var(--ink-2);cursor:pointer;}
+.mongo-dot{width:7px;height:7px;border-radius:50%;background:#059669;flex-shrink:0;}
+.mongo-dot.off{background:#dc2626;}
+.mongo-dot.sync{background:#d97706;animation:mpulse .8s ease-in-out infinite;}
+@keyframes mpulse{0%,100%{opacity:1}50%{opacity:.25}}
+</style>
+<div id="mongoBadge" class="mongo-badge" title="Sync status — click to refresh"><span class="mongo-dot off" id="mongoDot"></span><span id="mongoLbl">Local mode</span></div>
 </body>
 </html>
