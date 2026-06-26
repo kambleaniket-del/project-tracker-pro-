@@ -702,7 +702,6 @@ button.btn:disabled:hover{background:var(--card);border-color:var(--border);}
   .chart-body { scrollbar-width: thin !important; }
 
   </style>
-<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
 <div class="app">
@@ -1232,27 +1231,6 @@ button.btn:disabled:hover{background:var(--card);border-color:var(--border);}
 <script>const clampText=(str,maxPx,chPx=6.2)=>{if(!str)return'';const ch=Math.floor(maxPx/chPx);return str.length<=ch?str:str.slice(0,Math.max(1,ch-1))+'…';};
 
 // ====== CONSTANTS ======
-
-// ── Working Calendar ──────────────────────────────────────────────
-function isWorkingDay(date,project){
-  const wd=date.getDay();
-  if(wd===0||wd===6)return false;
-  const cal=project&&project.nonWorkingDays;
-  if(cal&&cal.length){const iso=isoFromDate(date);if(cal.includes(iso))return false;}
-  return true;
-}
-function addWorkingDays(date,n,project){
-  if(!n)return new Date(date);
-  const d=new Date(date);const step=n>0?1:-1;let rem=Math.abs(n);
-  while(rem>0){d.setDate(d.getDate()+step);if(isWorkingDay(d,project))rem--;}
-  return d;
-}
-function workingDaysBetweenDates(s,e,project){
-  if(!s||!e)return 0;let c=0;const cur=new Date(s);
-  while(cur<=e){if(isWorkingDay(cur,project))c++;cur.setDate(cur.getDate()+1);}
-  return c;
-}
-
 const STORAGE_KEY='tracker:data',LAST_BACKUP_KEY='tracker:lastBackup';
 const AXIS_H=44,COMMENTS_H=34,HEADER_H=AXIS_H+COMMENTS_H,ROW_H=36;
 const SVG_NS='http://www.w3.org/2000/svg';
@@ -1310,9 +1288,6 @@ function migrateTask(t){
   return t;
 }
 function migrateProject(p){
-  if(!p.nonWorkingDays)p.nonWorkingDays=[];
-  (p.resources||[]).forEach(r=>{if(!r.type)r.type='work';});
-  (p.tasks||[]).forEach(t=>{if(!t.taskType)t.taskType='fixed-duration';if(t.pertO===undefined)t.pertO=null;if(t.pertM===undefined)t.pertM=null;if(t.pertP===undefined)t.pertP=null;});
   if(!p.scenarios)p.scenarios=[];
   if(p.activeScenarioId===undefined)p.activeScenarioId=null;
   p.comments=p.comments??[];p.resources=p.resources??[];p.customFields=p.customFields??[];
@@ -1702,25 +1677,6 @@ function getDeadlineStatus(t){
 // AUTO-SCHEDULE CASCADE
 // When a task's dates change, ripple forward through deps
 // ══════════════════════════════════════════════════════════
-
-function backwardSchedule(project){
-  if(!project||!project.tasks)return;
-  const succs={};
-  project.tasks.forEach(t=>{(t.deps||[]).forEach(dep=>{const pid=dep.taskId||dep;if(!succs[pid])succs[pid]=[];succs[pid].push({task:t,type:dep.type||'FS',lag:dep.lag||0});});});
-  let projEnd=null;
-  project.tasks.forEach(t=>{const e=parseDate(t.end);if(e&&(!projEnd||e>projEnd))projEnd=e;});
-  if(!projEnd)return;
-  project.tasks.filter(t=>t.constraintType==='ALAP').forEach(t=>{
-    const mySuccs=succs[t.id]||[];let latestEnd=new Date(projEnd);
-    mySuccs.forEach(s=>{const sStart=parseDate(s.task.start);if(sStart){const needed=addWorkingDays(sStart,-(1+(s.lag||0)),project);if(needed<latestEnd)latestEnd=needed;}});
-    const s0=parseDate(t.start),e0=parseDate(t.end);
-    const dur=s0&&e0?workingDaysBetweenDates(s0,e0,project):1;
-    const newEnd=new Date(latestEnd);
-    const newStart=addWorkingDays(newEnd,-(dur-1),project);
-    t.start=isoFromDate(newStart);t.end=isoFromDate(newEnd);
-  });
-}
-
 function autoScheduleCascade(p, changedTaskId){
   if(!state.autoSchedule||!p||!p.tasks)return;
   const byId={};p.tasks.forEach(t=>{byId[t.id]=t;});
@@ -1750,7 +1706,7 @@ function autoScheduleCascade(p, changedTaskId){
       const succDur=succ.start&&succ.end?Math.max(1,daysBetween(parseDate(succ.start),parseDate(succ.end))):1;
       let newStart=null;
       switch(type){
-        case'FS': newStart=addWorkingDays(taskEnd,1+(dep.lag||0),p); break;
+        case'FS': newStart=addDays(taskEnd,1); break;
         case'SS': newStart=new Date(taskStart); break;
         case'FF':{const lagDays=succDur-1;newStart=addDays(taskEnd,-lagDays);break;}
         case'SF': newStart=addDays(taskStart,1); break;
@@ -3541,7 +3497,7 @@ function renderDepList(){
     const div=document.createElement('div');div.className='dep-row';
     const otherTasks=p.tasks.filter(x=>x.id!==editingTaskId);
     let opts=otherTasks.map(x=>`<option value="${x.id}"${x.id===row.taskId?' selected':''}>${escapeHtml(wbsCodeCache[x.id]?wbsCodeCache[x.id]+' ':'')}${escapeHtml(x.name)}</option>`).join('');
-    div.innerHTML=`<select class="dr-pred">${opts}</select><select class="dr-type"><option value="FS"${row.type==='FS'?' selected':''}>FS — Finish→Start</option><option value="SS"${row.type==='SS'?' selected':''}>SS — Start→Start</option><option value="FF"${row.type==='FF'?' selected':''}>FF — Finish→Finish</option><option value="SF"${row.type==='SF'?' selected':''}>SF — Start→Finish</option></select><input type="number" class="dr-lag" value="${row.lag||0}" title="Lag days (+delay / -lead)" style="width:50px;font-size:10px;padding:2px 4px;border:1px solid var(--border);border-radius:4px;text-align:center;margin:0 4px;" min="-99" max="99"><span style="font-size:9px;color:var(--ink-3)">lag</span><button class="remove-btn" data-idx="${i}">×</button>`;
+    div.innerHTML=`<select class="dr-pred">${opts}</select><select class="dr-type"><option value="FS"${row.type==='FS'?' selected':''}>FS — Finish→Start</option><option value="SS"${row.type==='SS'?' selected':''}>SS — Start→Start</option><option value="FF"${row.type==='FF'?' selected':''}>FF — Finish→Finish</option><option value="SF"${row.type==='SF'?' selected':''}>SF — Start→Finish</option></select><button class="remove-btn" data-idx="${i}">×</button>`;
     div.querySelector('.dr-pred').onchange=e=>{currentDepRows[i].taskId=e.target.value;};
     div.querySelector('.dr-type').onchange=e=>{currentDepRows[i].type=e.target.value;};
     div.querySelector('.remove-btn').onclick=()=>{currentDepRows.splice(i,1);renderDepList();};
@@ -3569,17 +3525,6 @@ function updateDeadlineHint(){
   hint.style.color=days<0?'#DC2626':'#059669';
 }
 // ====== TASK MODAL ======
-
-function applyPERT(){
-  const o=parseFloat(document.getElementById('f-pert-o')?.value);
-  const m=parseFloat(document.getElementById('f-pert-m')?.value);
-  const p2=parseFloat(document.getElementById('f-pert-p')?.value);
-  if(isNaN(o)||isNaN(m)||isNaN(p2)){showToast('Enter all 3 values','warning');return;}
-  const days=Math.round((o+4*m+p2)/6);
-  const sd=document.getElementById('f-start');const ed=document.getElementById('f-end');
-  if(sd&&sd.value){const s=parseDate(sd.value);if(s){const e=addWorkingDays(s,days-1,getProject());if(ed)ed.value=isoFromDate(e);showToast('PERT: '+days+'d applied','success');}}
-}
-
 function openTaskModal(taskId){
   const p=getProject();if(!p)return;const t=p.tasks.find(x=>x.id===taskId);if(!t)return;
   editingTaskId=taskId;
@@ -3619,10 +3564,6 @@ function openTaskModal(taskId){
   currentDepRows=(t.deps||[]).map(d=>typeof d==='string'?{taskId:d,type:'FS'}:{...d});
   renderDepList();
   // Constraint
-  const ttSel=document.getElementById('f-task-type');if(ttSel)ttSel.value=t.taskType||'fixed-duration';
-  const po=document.getElementById('f-pert-o');if(po)po.value=t.pertO||'';
-  const pm=document.getElementById('f-pert-m');if(pm)pm.value=t.pertM||'';
-  const pp=document.getElementById('f-pert-p');if(pp)pp.value=t.pertP||'';
   const ctSel=document.getElementById('f-constraint-type');if(ctSel)ctSel.value=t.constraintType||'ASAP';
   const cdInp=document.getElementById('f-constraint-date');if(cdInp)cdInp.value=t.constraintDate||'';
   updateConstraintDateVisibility();
@@ -3713,14 +3654,10 @@ function saveTaskFromModal(){
     else{const ci=document.getElementById('f-color-custom');t.color=ci&&ci.value&&ci.value!=='#0369a1'?ci.value:'';}
   }
   // Deps (new format)
-  t.deps=currentDepRows.filter(r=>r.taskId).map(r=>({taskId:r.taskId,type:r.type||'FS',lag:parseInt(r.lag)||0}));
+  t.deps=currentDepRows.filter(r=>r.taskId).map(r=>({taskId:r.taskId,type:r.type||'FS'}));
   // Constraint
   const ctEl=document.getElementById('f-constraint-type');
   const ctVal=ctEl?ctEl.value:'ASAP';
-  t.taskType=document.getElementById('f-task-type')?.value||'fixed-duration';
-  t.pertO=parseFloat(document.getElementById('f-pert-o')?.value)||null;
-  t.pertM=parseFloat(document.getElementById('f-pert-m')?.value)||null;
-  t.pertP=parseFloat(document.getElementById('f-pert-p')?.value)||null;
   t.constraintType=ctVal||'ASAP';
   const cdEl=document.getElementById('f-constraint-date');
   t.constraintDate=(['ASAP','ALAP'].includes(t.constraintType)||!cdEl)?null:(cdEl.value||null);
@@ -3762,7 +3699,7 @@ function renderResourceList(){
 function addResource(){
   const p=getProject();if(!p)return;
   const n=p.resources.length;
-  p.resources.push({id:uid('res'),name:`Resource ${n+1}`,type:'work',hoursPerDay:8,costPerHour:0,hrsPerDay:8,costPerHr:0,color:RESOURCE_COLORS[n%RESOURCE_COLORS.length]});
+  p.resources.push({id:uid('res'),name:`Resource ${n+1}`,hoursPerDay:8,costPerHour:0,color:RESOURCE_COLORS[n%RESOURCE_COLORS.length]});
   renderResourceList();
 }
 
@@ -4525,8 +4462,6 @@ function showToast(msg, duration) {
       <div class="report-tabs">
         <div class="report-tab active" onclick="switchReportTab(this,'rSlipping')">🔴 Slipping</div>
         <div class="report-tab" onclick="switchReportTab(this,'rOveralloc')">⚡ Overalloc</div>
-        <div class="report-tab" onclick="switchReportTab(this,'rEVM')">📊 EVM</div>
-        <div class="report-tab" onclick="switchReportTab(this,'rCustom')">🛠 Custom</div>
         <div class="report-tab" onclick="switchReportTab(this,'rMilestones')">◆ Milestones</div>
         <div class="report-tab" onclick="switchReportTab(this,'rDeps')">🔗 Dep Health</div>
         <div class="report-tab" onclick="switchReportTab(this,'rCrossProject')">🌐 Cross-Project</div>
@@ -5427,99 +5362,6 @@ function renderCrossProjectReport() {
       Health score = % complete − overdue penalty − blocked penalty − critical penalty. Score of 80+ = healthy.
     </div>`;
 }
-
-
-function calcEVM(project){
-  if(!project||!project.tasks)return null;
-  const today=todayMid();let BCWS=0,BCWP=0,ACWP=0,BAC=0;
-  project.tasks.forEach(t=>{
-    const s=parseDate(t.start),e=parseDate(t.end);if(!s||!e)return;
-    const ef=computeEffort(t);const totalBudget=ef.cost||(ef.work*100);BAC+=totalBudget;
-    if(today>=e)BCWS+=totalBudget;
-    else if(today>=s){const td=Math.max(1,daysBetween(s,e));const dd=Math.max(0,daysBetween(s,today));BCWS+=totalBudget*(dd/td);}
-    BCWP+=totalBudget*((t.progress||0)/100);
-    const logged=(t.workHours||0);const r0=project.resources&&project.resources[0];
-    const rate=r0?(r0.costPerHr||r0.costPerHour||100):100;ACWP+=logged*rate;
-  });
-  const SPI=BCWS>0?BCWP/BCWS:1;const CPI=ACWP>0?BCWP/ACWP:1;
-  const EAC=CPI>0?BAC/CPI:BAC;const VAC=BAC-EAC;
-  return{BCWS:Math.round(BCWS),BCWP:Math.round(BCWP),ACWP:Math.round(ACWP),BAC:Math.round(BAC),EAC:Math.round(EAC),VAC:Math.round(VAC),CV:Math.round(BCWP-ACWP),SV:Math.round(BCWP-BCWS),SPI:Math.round(SPI*100)/100,CPI:Math.round(CPI*100)/100};
-}
-function renderEVMReport(){
-  const p=getProject();const el=document.getElementById('rEVM');if(!el)return;
-  const evm=p?calcEVM(p):null;
-  if(!evm){el.innerHTML='<div class="empty-list-msg">Add resources and log work hours to see EVM data.</div>';return;}
-  const sc=evm.SPI>=0.95?'#059669':evm.SPI>=0.8?'#d97706':'#dc2626';
-  const cc=evm.CPI>=0.95?'#059669':evm.CPI>=0.8?'#d97706':'#dc2626';
-  const card=(k,label,val,col)=>`<div style="background:var(--paper-tint);border-radius:8px;padding:12px;border:1px solid var(--border);"><div style="font-size:9px;font-family:var(--font-mono);color:var(--ink-3);text-transform:uppercase;letter-spacing:.06em;">${k}</div><div style="font-size:10px;color:var(--ink-2);margin:2px 0 6px;">${label}</div><div style="font-size:18px;font-weight:800;color:${col};font-family:var(--font-display);">${val}</div></div>`;
-  const fmt=(n)=>(n<0?'−':'')+'INR '+Math.abs(n).toLocaleString('en-IN');
-  el.innerHTML=`<h4 style="font-family:var(--font-display);margin:0 0 14px">Earned Value Analysis</h4>
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;">
-    ${card('BAC','Budget at Completion',fmt(evm.BAC),'#475569')}
-    ${card('PV / BCWS','Planned Value',fmt(evm.BCWS),'#2563eb')}
-    ${card('EV / BCWP','Earned Value',fmt(evm.BCWP),'#059669')}
-    ${card('AC / ACWP','Actual Cost',fmt(evm.ACWP),'#dc2626')}
-    ${card('EAC','Estimate at Completion',fmt(evm.EAC),'#7c3aed')}
-    ${card('VAC','Variance at Completion',fmt(evm.VAC),evm.VAC>=0?'#059669':'#dc2626')}
-  </div>
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
-    ${card('SPI','Schedule Perf. Index',evm.SPI.toFixed(2),sc)}
-    ${card('CPI','Cost Perf. Index',evm.CPI.toFixed(2),cc)}
-    ${card('SV','Schedule Variance',fmt(evm.SV),evm.SV>=0?'#059669':'#dc2626')}
-    ${card('CV','Cost Variance',fmt(evm.CV),evm.CV>=0?'#059669':'#dc2626')}
-  </div>`;
-}
-
-
-function exportXLSX(){
-  const p=getProject();if(!p){showToast('No project','warning');return;}
-  if(typeof XLSX==='undefined'){showToast('XLSX library not ready','warning');return;}
-  const{visible}=getOrderedTasks();
-  const rows=[['WBS','Task','Owner','Status','Priority','Start','End','Progress%','Duration(d)','Work(h)','Cost','Task Type','Notes']];
-  visible.forEach((t,i)=>{
-    const ef=computeEffort(t);const dur=parseDate(t.start)&&parseDate(t.end)?daysBetween(parseDate(t.start),parseDate(t.end))+1:0;
-    rows.push([wbsCodeCache[t.id]||String(i+1),t.name,resourceLabel(t),t.status,t.priority,t.start||'',t.end||'',t.progress||0,dur,ef.work,ef.cost,t.taskType||'fixed-duration',t.notes||'']);
-  });
-  const ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=[{wch:6},{wch:32},{wch:18},{wch:12},{wch:10},{wch:12},{wch:12},{wch:10},{wch:10},{wch:10},{wch:10},{wch:14},{wch:30}];
-  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Tasks');
-  const evm=calcEVM(p);
-  if(evm){const evmWs=XLSX.utils.aoa_to_sheet([['Metric','Value'],['BAC',evm.BAC],['BCWS (PV)',evm.BCWS],['BCWP (EV)',evm.BCWP],['ACWP (AC)',evm.ACWP],['SPI',evm.SPI],['CPI',evm.CPI],['EAC',evm.EAC],['VAC',evm.VAC],['SV',evm.SV],['CV',evm.CV]]);XLSX.utils.book_append_sheet(wb,evmWs,'EVM');}
-  if(p.resources&&p.resources.length){const resWs=XLSX.utils.aoa_to_sheet([['Name','Type','Hrs/Day','Cost/Hr'],...p.resources.map(r=>[r.name,r.type||'work',r.hrsPerDay||8,r.costPerHr||0])]);XLSX.utils.book_append_sheet(wb,resWs,'Resources');}
-  XLSX.writeFile(wb,(p.name||'project').replace(/[^a-zA-Z0-9]/g,'_')+'_'+new Date().toISOString().slice(0,10)+'.xlsx');
-  showToast('XLSX exported','success');
-}
-
-
-function levelResources(){
-  const p=getProject();if(!p){showToast('No project','warning');return;}
-  const alloc={};let moved=0;
-  const sorted=[...p.tasks].filter(t=>!t.isMilestone&&t.status!=='done').sort((a,b)=>{const as=parseDate(a.start),bs=parseDate(b.start);return as&&bs?as-bs:0;});
-  sorted.forEach(t=>{
-    const s=parseDate(t.start),e=parseDate(t.end);if(!s||!e)return;
-    let over=false;
-    (t.assignedResources||[]).forEach(ar=>{
-      if(!alloc[ar.resourceId])alloc[ar.resourceId]={};
-      const cur=new Date(s);while(cur<=e){if(isWorkingDay(cur,p)){const iso=isoFromDate(cur);alloc[ar.resourceId][iso]=(alloc[ar.resourceId][iso]||0)+(ar.allocation||100);if(alloc[ar.resourceId][iso]>100)over=true;}cur.setDate(cur.getDate()+1);}
-    });
-    if(over){
-      (t.assignedResources||[]).forEach(ar=>{const cur=new Date(s);while(cur<=e){if(isWorkingDay(cur,p)){const iso=isoFromDate(cur);if(alloc[ar.resourceId]&&alloc[ar.resourceId][iso])alloc[ar.resourceId][iso]-=(ar.allocation||100);}cur.setDate(cur.getDate()+1);}});
-      const dur=workingDaysBetweenDates(s,e,p)||1;
-      const ns=addWorkingDays(s,1,p);const ne=addWorkingDays(ns,dur-1,p);
-      t.start=isoFromDate(ns);t.end=isoFromDate(ne);moved++;
-      (t.assignedResources||[]).forEach(ar=>{if(!alloc[ar.resourceId])alloc[ar.resourceId]={};const cur=new Date(ns);while(cur<=ne){if(isWorkingDay(cur,p)){const iso=isoFromDate(cur);alloc[ar.resourceId][iso]=(alloc[ar.resourceId][iso]||0)+(ar.allocation||100);}cur.setDate(cur.getDate()+1);}});
-    }
-  });
-  pushUndo();saveState();renderAll();
-  showToast(moved?'Levelled '+moved+' task(s)':'No overallocation found','success');
-}
-
-
-function _crGetFields(){return [...(document.getElementById('crFields')?.selectedOptions||[])].map(o=>o.value);}
-function _crGetTasks(){const p=getProject();if(!p)return[];const sf=document.getElementById('crStatus')?.value||'';const of=(document.getElementById('crOwner')?.value||'').toLowerCase();return p.tasks.filter(t=>{if(sf&&t.status!==sf)return false;if(of&&!(resourceLabel(t)||'').toLowerCase().includes(of))return false;return true;});}
-function _crRow(t,fields){const ef=computeEffort(t);const dur=parseDate(t.start)&&parseDate(t.end)?daysBetween(parseDate(t.start),parseDate(t.end))+1:0;const m={wbs:wbsCodeCache[t.id]||'',name:t.name,owner:resourceLabel(t),status:t.status,priority:t.priority,start:t.start||'',end:t.end||'',progress:(t.progress||0)+'%',duration:dur,work:ef.work,cost:ef.cost,taskType:t.taskType||'',notes:t.notes||''};return fields.map(f=>m[f]??'');}
-function renderCustomReport(){const fields=_crGetFields();const tasks=_crGetTasks();const el=document.getElementById('crOutput');if(!el)return;if(!tasks.length){el.innerHTML='<div class="empty-list-msg">No tasks match.</div>';return;}const hdrs={wbs:'WBS',name:'Task',owner:'Owner',status:'Status',priority:'Priority',start:'Start',end:'End',progress:'Progress',duration:'Dur(d)',work:'Work(h)',cost:'Cost',taskType:'Type',notes:'Notes'};el.innerHTML=`<table style="width:100%;border-collapse:collapse;font-size:11px;"><thead><tr style="background:var(--paper-tint);">${fields.map(f=>`<th style="border:1px solid var(--border);padding:5px 8px;">${hdrs[f]||f}</th>`).join('')}</tr></thead><tbody>${tasks.map(t=>`<tr>${_crRow(t,fields).map(v=>`<td style="border:1px solid var(--border);padding:5px 8px;">${escapeHtml(String(v))}</td>`).join('')}</tr>`).join('')}</tbody></table>`;}
-function exportCustomReportCSV(){const fields=_crGetFields();const tasks=_crGetTasks();const hdrs={wbs:'WBS',name:'Task',owner:'Owner',status:'Status',priority:'Priority',start:'Start',end:'End',progress:'Progress',duration:'Dur(d)',work:'Work(h)',cost:'Cost',taskType:'Type',notes:'Notes'};const rows=[fields.map(f=>hdrs[f]||f),...tasks.map(t=>_crRow(t,fields))];const csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='custom_report.csv';a.click();}
-function exportCustomReportXLSX(){if(typeof XLSX==='undefined'){showToast('XLSX not ready','warning');return;}const fields=_crGetFields();const tasks=_crGetTasks();const hdrs={wbs:'WBS',name:'Task',owner:'Owner',status:'Status',priority:'Priority',start:'Start',end:'End',progress:'Progress',duration:'Dur(d)',work:'Work(h)',cost:'Cost',taskType:'Type',notes:'Notes'};const rows=[fields.map(f=>hdrs[f]||f),...tasks.map(t=>_crRow(t,fields))];const ws=XLSX.utils.aoa_to_sheet(rows);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Report');XLSX.writeFile(wb,'custom_report.xlsx');}
 
 function exportReportCSV() {
   const today = todayMid();
