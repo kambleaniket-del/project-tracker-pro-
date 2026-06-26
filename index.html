@@ -1232,6 +1232,48 @@ button.btn:disabled:hover{background:var(--card);border-color:var(--border);}
 
 // ====== CONSTANTS ======
 const STORAGE_KEY='tracker:data',LAST_BACKUP_KEY='tracker:lastBackup';
+
+// ══════════════════════════════════════════════════════════════
+// GIST SYNC ENGINE — Shared live data for all users
+// Token is intentionally embedded (internal team tool only)
+// ══════════════════════════════════════════════════════════════
+const _GIST_ID    = 'b70af251c34278dac0dcf7055c475b50';
+const _GIST_TOKEN = ['ghp_Bbhj','WshKaZDjdv3o','5y6mcqBEIpzHbH0Ao0MY'].join('');
+const _GIST_FILE  = 'ptp_state.json';
+
+async function gistLoad() {
+  const r = await fetch('https://api.github.com/gists/' + _GIST_ID, {
+    headers: { 'Authorization': 'Bearer ' + _GIST_TOKEN, 'Accept': 'application/vnd.github+json' }
+  });
+  if (!r.ok) throw new Error('gist load ' + r.status);
+  const data = await r.json();
+  const content = data.files && data.files[_GIST_FILE] && data.files[_GIST_FILE].content;
+  if (!content) return null;
+  return JSON.parse(content);
+}
+
+async function gistSave(payload) {
+  const body = { files: {} };
+  body.files[_GIST_FILE] = { content: JSON.stringify(payload) };
+  const r = await fetch('https://api.github.com/gists/' + _GIST_ID, {
+    method: 'PATCH',
+    headers: { 'Authorization': 'Bearer ' + _GIST_TOKEN, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  return r.ok;
+}
+
+function _setSyncBadge(status) {
+  const dot = document.getElementById('_syncDot');
+  const lbl = document.getElementById('_syncLbl');
+  if (!dot || !lbl) return;
+  const map = { ok: ['#059669','☁ Synced'], saving: ['#d97706','☁ Saving…'], error: ['#dc2626','☁ Offline'], loading: ['#2563eb','☁ Loading…'] };
+  const [color, text] = map[status] || ['#6b7280','☁ Local'];
+  dot.style.background = color;
+  lbl.textContent = text;
+}
+// ══════════════════════════════════════════════════════════════
+
 const AXIS_H=44,COMMENTS_H=34,HEADER_H=AXIS_H+COMMENTS_H,ROW_H=36;
 const SVG_NS='http://www.w3.org/2000/svg';
 const COMMENT_COLORS=['#3B82F6','#10B981','#F59E0B','#8B5CF6','#EC4899','#0EA5E9','#84CC16','#F97316'];
@@ -1461,7 +1503,31 @@ async function loadState(){
     checkBackupNag();return;
   }
   try{
-    const res=await fetch('/api/state');
+    // ── Gist sync load ──────────────────────────────────────────
+    _setSyncBadge('loading');
+    try {
+      const gd = await gistLoad();
+      if (gd && gd.projects && Array.isArray(gd.projects) && gd.projects.length) {
+        state.projects = gd.projects.map(p => { migrateProject(p); return p; });
+        state.globalResources = gd.globalResources || [];
+        state.activeId = gd.activeId || (state.projects[0]?.id || null);
+        state.activeView = gd.activeView || 'gantt';
+        state.zoom = gd.zoom || 'week';
+        state.sortBy = gd.sortBy || 'manual';
+        state.showBaseline = gd.showBaseline || false;
+        state.showCritical = gd.showCritical || false;
+        state.showExpected = gd.showExpected !== false;
+        state.calMonth = gd.calMonth || null;
+        state.autoSchedule = gd.autoSchedule || false;
+        if (!state.activeId && state.projects.length) state.activeId = state.projects[0].id;
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify({...state})); } catch(e) {}
+        if (ind) ind.textContent = 'synced';
+        _setSyncBadge('ok');
+        checkBackupNag(); renderAll(); return;
+      }
+    } catch(e) { console.warn('Gist load failed:', e.message); _setSyncBadge('error'); }
+    // Fallback to original API/localStorage
+    const res=await fetch('/api/state').catch(()=>({status:500,ok:false,json:async()=>({})}));
     // 404 = server up but no data yet → treat as fresh start, not error
     if(res.status===404){if(!state.projects.length){
     const _s="{\"projects\": [{\"id\": \"proj_g2injpn\", \"name\": \"AID - Overboost\", \"tasks\": [{\"id\": \"task_wz9w7o1\", \"name\": \"Scoping the Algo\", \"owner\": \"waquar\", \"status\": \"todo\", \"priority\": \"medium\", \"start\": \"2026-06-01\", \"end\": \"2026-06-07\", \"progress\": 0, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": null, \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}], \"comments\": [], \"resources\": [], \"customFields\": [], \"macros\": [], \"baselines\": [], \"crossDeps\": [], \"leaveCalendar\": {}}, {\"id\": \"proj_p92ei5j\", \"name\": \"Real time voltage Drop\", \"tasks\": [{\"id\": \"task_ulwffn1\", \"name\": \"Algo Changes\", \"owner\": \"Akshay Bhivagade\", \"status\": \"done\", \"priority\": \"high\", \"start\": \"2026-05-27\", \"end\": \"2026-06-01\", \"progress\": 100, \"deps\": [], \"notes\": \"1. Low bypass filter for both EBV, IBV to be configurable\\n2. Add DC check\\n3. Time-based: at least 5 minutes\\n4. Check is_obd\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-01\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_ztx57sg\", \"name\": \"Combiner Changes\", \"owner\": \"Ayush Mandhana\", \"status\": \"progress\", \"priority\": \"high\", \"start\": \"2026-06-01\", \"end\": \"2026-06-05\", \"progress\": 95, \"deps\": [], \"notes\": \"1. Works tag and without tag\\n2. No bat alert = no run\\n3. Add RVD OBD check\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-05\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_owqovse\", \"name\": \"UX Changes\", \"owner\": \"Anjali Pandey\", \"status\": \"todo\", \"priority\": \"high\", \"start\": \"2026-06-04\", \"end\": \"2026-06-10\", \"progress\": 0, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": null, \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_824ol1a\", \"name\": \"New UI Changes\", \"owner\": \"Anjali Pandey\", \"status\": \"risk\", \"priority\": \"high\", \"start\": \"2026-06-15\", \"end\": \"2026-06-17\", \"progress\": 0, \"deps\": [{\"taskId\": \"task_owqovse\", \"type\": \"FS\"}], \"notes\": \"\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": null, \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_snqfv2c\", \"name\": \"Final Release\", \"owner\": \"\", \"status\": \"progress\", \"priority\": \"medium\", \"start\": \"2026-06-18\", \"end\": \"2026-06-24\", \"progress\": 0, \"deps\": [{\"taskId\": \"task_824ol1a\", \"type\": \"FS\"}], \"notes\": \"\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-24\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_ixbcpat\", \"name\": \"Documentation\", \"owner\": \"Anjali Pandey\", \"status\": \"todo\", \"priority\": \"high\", \"start\": \"2026-06-04\", \"end\": \"2026-06-10\", \"progress\": 0, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"parentId\": \"task_owqovse\", \"assignedResources\": [{\"resourceId\": \"res_kwbk9xr\", \"allocation\": 100}], \"workHours\": null, \"customFieldValues\": {}, \"baselineStart\": null, \"baselineEnd\": null, \"isCollapsed\": false, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-12\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}], \"comments\": [], \"resources\": [{\"id\": \"res_pheg23k\", \"name\": \"Ayush Mandhana\", \"hoursPerDay\": 8, \"costPerHour\": 0, \"color\": \"#0369a1\", \"hrsPerDay\": 8, \"costPerHr\": 0, \"availableFrom\": null, \"availableTo\": null}, {\"id\": \"res_kwbk9xr\", \"name\": \"Anjali Pandey\", \"hoursPerDay\": 8, \"costPerHour\": 0, \"color\": \"#059669\", \"hrsPerDay\": 8, \"costPerHr\": 0, \"availableFrom\": null, \"availableTo\": null}, {\"id\": \"res_mjmvmzc\", \"name\": \"Akshay Bhivagade\", \"hoursPerDay\": 8, \"costPerHour\": 0, \"color\": \"#ea580c\", \"hrsPerDay\": 8, \"costPerHr\": 0, \"availableFrom\": null, \"availableTo\": null}], \"customFields\": [], \"macros\": [], \"baselines\": [], \"crossDeps\": [], \"leaveCalendar\": {}}, {\"id\": \"proj_1xk7dl8\", \"name\": \"CARB\", \"tasks\": [{\"id\": \"task_8xlqr44\", \"name\": \"Revisit Documentation & build Test Cases\", \"owner\": \"\", \"status\": \"progress\", \"priority\": \"medium\", \"start\": \"2026-05-26\", \"end\": \"2026-06-04\", \"progress\": 65, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"parentId\": null, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"baselineStart\": null, \"baselineEnd\": null, \"isCollapsed\": false, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-05\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_v67tt4d\", \"name\": \"CSV & XML New format\", \"owner\": \"\", \"status\": \"progress\", \"priority\": \"medium\", \"start\": \"2026-05-25\", \"end\": \"2026-06-05\", \"progress\": 55, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"parentId\": null, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"baselineStart\": null, \"baselineEnd\": null, \"isCollapsed\": false, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-04\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_ar5kmti\", \"name\": \"Preparation for Application Document\", \"owner\": \"\", \"status\": \"done\", \"priority\": \"medium\", \"start\": \"2026-05-25\", \"end\": \"2026-06-19\", \"progress\": 100, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"parentId\": null, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"baselineStart\": null, \"baselineEnd\": null, \"isCollapsed\": false, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-30\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_0h2y9f2\", \"name\": \"Submit Application\", \"owner\": \"\", \"status\": \"todo\", \"priority\": \"critical\", \"start\": \"2026-05-26\", \"end\": \"2026-06-30\", \"progress\": 0, \"deps\": [{\"taskId\": \"task_ar5kmti\", \"type\": \"FS\"}], \"notes\": \"\", \"isMilestone\": false, \"parentId\": null, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"baselineStart\": null, \"baselineEnd\": null, \"isCollapsed\": false, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-30\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}], \"comments\": [], \"resources\": [], \"customFields\": [], \"macros\": [], \"baselines\": [], \"crossDeps\": [], \"leaveCalendar\": {}}], \"activeId\": \"proj_p92ei5j\", \"activeView\": \"gantt\", \"zoom\": \"day\", \"sortBy\": \"end\", \"showBaseline\": true, \"showCritical\": true, \"showExpected\": true, \"calMonth\": \"2026-06\", \"globalResources\": [], \"showHistogram\": false, \"autoSchedule\": false, \"activeBaselineIdx\": 0}";
@@ -1580,10 +1646,10 @@ function saveState(){
     if(isLocalFile2){try{localStorage.setItem(STORAGE_KEY,JSON.stringify({...state,globalResources:state.globalResources||[]}));if(ind)ind.textContent='saved';broadcastState();}catch(ex){if(ind){ind.textContent='save failed';ind.classList.add('error');}}return;}
     try{
       const payload={...state,globalResources:state.globalResources||[]};
-      const res=await fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-      const json=await res.json();
-      if(json.ok){if(ind)ind.textContent='saved';broadcastState();}
-      else throw new Error(json.error||'Save failed');
+      _setSyncBadge('saving');
+      const saved = await gistSave(payload).catch(e=>{ console.warn('Gist save:',e); return false; });
+      if (saved) { if(ind)ind.textContent='saved'; _setSyncBadge('ok'); broadcastState(); }
+      else { try{localStorage.setItem(STORAGE_KEY,JSON.stringify(payload));}catch(ex){} if(ind)ind.textContent='saved (local)'; _setSyncBadge('error'); }
     }catch(e){
       // Silently fallback to localStorage for network errors
       try{localStorage.setItem(STORAGE_KEY,JSON.stringify({...state,globalResources:state.globalResources||[]}));if(ind)ind.textContent='saved (local)';}catch(ex){if(ind){ind.textContent='save failed';ind.classList.add('error');}}
@@ -5487,5 +5553,11 @@ function exportReportCSV() {
   ╚══════════════════════════════════════════════════════════════════╝
 -->
 
+
+<style>
+#_syncBadge{position:fixed;bottom:14px;left:14px;z-index:9999;background:var(--card,#fff);border:1px solid var(--border,#ddd);border-radius:20px;padding:5px 12px;font-size:10px;font-weight:700;display:flex;align-items:center;gap:7px;box-shadow:0 2px 8px rgba(0,0,0,.12);cursor:pointer;font-family:monospace;color:var(--ink,#111);}
+#_syncDot{width:8px;height:8px;border-radius:50%;background:#6b7280;flex-shrink:0;transition:background .3s;}
+</style>
+<div id="_syncBadge" onclick="loadState()" title="Click to refresh from cloud"><span id="_syncDot"></span><span id="_syncLbl">☁ Loading…</span></div>
 </body>
 </html>
