@@ -282,44 +282,46 @@ button.btn:disabled:hover{background:var(--card);border-color:var(--border);}
 .modal-backdrop{position:fixed;inset:0;background:rgba(15,28,46,.45);display:none;align-items:center;justify-content:center;z-index:100;}
 .modal-overlay{position:fixed;inset:0;background:rgba(15,28,46,.45);display:none;align-items:center;justify-content:center;z-index:100;}
 .modal-backdrop.open{display:flex;}
-.modal{background:var(--card);border:1px solid var(--border);border-radius:8px;width:520px;max-width:90vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(15,23,42,.15),0 4px 16px rgba(15,23,42,.06);}
-.modal.wide{width:640px;}
-.modal-header{padding:18px 22px;border-bottom:1px solid var(--border-soft);font-family:var(--font-display);font-weight:700;font-size:17px;display:flex;justify-content:space-between;align-items:baseline;color:var(--ink);}
-.modal-body{padding:20px 22px;display:grid;gap:14px;}
-.modal-footer{padding:14px 22px;border-top:1px solid var(--border-soft);display:flex;justify-content:space-between;gap:8px;background:var(--paper-tint);}
-.modal-footer-right{display:flex;gap:8px;}
-.field{display:grid;gap:5px;}
-.field label{font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-4);font-weight:600;font-family:var(--font-mono);}
-.field input,.field select,.field textarea{background:var(--card);border:1px solid var(--border);color:var(--ink);font:inherit;font-family:var(--font-body);padding:9px 11px;border-radius:4px;font-size:13px;}
-.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--accent);}
-.field textarea{min-height:64px;resize:vertical;}
-.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.field-row-3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;}
-.checkbox-row{display:flex;align-items:center;gap:8px;padding:8px 0;}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:12px;width:min(1100px,92vw);max-width:92vw;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(15,23,42,.18),0 4px 16px rgba(15,23,42,.08);}
+.modal.wide{width:min(1100px,92vw);max-width:92vw;}
+.modal-header{padding:18px 24px;border-bottom:1px solid var(--border-soft);font-family:var(--font-display);font-weight:700;font-size:18px;display:flex;justify-content:space-between;align-items:baseline;color:var(--ink);flex-shrink:0;}
+.modal-body{padding:24px;display:grid;gap:20px;overflow-y:auto;flex:1 1 auto;}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border-soft);display:flex;justify-content:space-between;gap:12px;background:var(--paper-tint);flex-shrink:0;border-radius:0 0 12px 12px;}
+.modal-footer-right{display:flex;gap:12px;}
+.field{display:grid;gap:8px;}
+.field label{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-3);font-weight:600;font-family:var(--font-mono);}
+.field input,.field select,.field textarea{background:var(--card);border:1px solid var(--border);color:var(--ink);font:inherit;font-family:var(--font-body);padding:9px 12px;border-radius:6px;font-size:14px;height:40px;box-sizing:border-box;}
+.field textarea{height:auto;min-height:150px;resize:vertical;line-height:1.6;}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.1);}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.checkbox-row{display:flex;align-items:center;gap:10px;padding:6px 0;}
 .checkbox-row input[type="checkbox"]{width:16px;height:16px;accent-color:var(--accent);cursor:pointer;}
-.checkbox-row label{font-size:12px;color:var(--ink-2);cursor:pointer;font-weight:500;}
+.checkbox-row label{font-size:13px;color:var(--ink-2);cursor:pointer;font-weight:500;}
 .progress-row{display:flex;gap:12px;align-items:center;}
 .progress-row input[type=range]{flex:1;accent-color:var(--accent);}
 .progress-row .pct{font-family:var(--font-mono);font-size:13px;font-weight:600;width:50px;text-align:right;color:var(--ink);}
 .expected-hint{font-size:10px;color:var(--ink-4);font-family:var(--font-mono);margin-top:-2px;}
 
 /* RESOURCE ASSIGNMENT IN TASK MODAL */
-.assignment-list{display:grid;gap:6px;}
-.assignment-row{display:grid;grid-template-columns:1fr 80px 28px;gap:8px;align-items:center;background:var(--paper-tint);padding:7px 10px;border-radius:4px;}
-.assignment-row select,.assignment-row input{background:var(--card);border:1px solid var(--border);padding:5px 8px;border-radius:3px;font:inherit;font-family:var(--font-body);font-size:12px;}
+.assignment-list{display:grid;gap:8px;}
+.assignment-row{display:grid;grid-template-columns:1fr 120px 32px;gap:10px;align-items:center;background:var(--paper-tint);padding:8px 12px;border-radius:6px;border:1px solid var(--border-soft);}
+.assignment-row select,.assignment-row input{background:var(--card);border:1px solid var(--border);padding:7px 10px;border-radius:4px;font:inherit;font-family:var(--font-body);font-size:13px;height:36px;box-sizing:border-box;}
 .assignment-row .alloc-input{font-family:var(--font-mono);text-align:right;}
 .assignment-row .remove-btn{background:transparent;border:none;color:var(--accent);cursor:pointer;font-size:14px;padding:0;}
-.assignment-add{font-size:11px;color:var(--accent);cursor:pointer;font-weight:600;padding:4px 0;}
-.dep-row{display:grid;grid-template-columns:1fr 120px 28px;gap:8px;align-items:center;background:var(--paper-tint);padding:7px 10px;border-radius:4px;}
-.dep-row select{background:var(--card);border:1px solid var(--border);padding:5px 8px;border-radius:3px;font:inherit;font-family:var(--font-body);font-size:12px;}
+.assignment-add{font-size:12px;color:var(--accent);cursor:pointer;font-weight:600;padding:6px 0;}
+.dep-row{display:grid;grid-template-columns:1fr 140px 80px 32px;gap:10px;align-items:center;background:var(--paper-tint);padding:8px 12px;border-radius:6px;border:1px solid var(--border-soft);}
+.dep-row select{background:var(--card);border:1px solid var(--border);padding:7px 10px;border-radius:4px;font:inherit;font-family:var(--font-body);font-size:13px;height:36px;box-sizing:border-box;}
+.dep-row .lag-input{background:var(--card);border:1px solid var(--border);padding:7px 8px;border-radius:4px;font:inherit;font-family:var(--font-mono);font-size:12px;width:100%;text-align:right;height:36px;box-sizing:border-box;}
+.dep-row .lag-wrap{display:flex;align-items:center;gap:4px;}
+.dep-row .lag-lbl{font-size:11px;color:var(--ink-4);white-space:nowrap;}
 .dep-type-badge{display:inline-flex;align-items:center;gap:3px;font-family:var(--font-mono);font-size:9px;padding:2px 5px;border-radius:3px;font-weight:700;}
 .assignment-add:hover{text-decoration:underline;}
-.effort-readout{background:var(--paper-tint);padding:9px 12px;border-radius:4px;font-family:var(--font-mono);font-size:11px;color:var(--ink-2);display:flex;justify-content:space-between;gap:14px;}
+.effort-readout{background:var(--paper-tint);padding:10px 14px;border-radius:6px;font-family:var(--font-mono);font-size:12px;color:var(--ink-2);display:flex;justify-content:space-between;gap:14px;border:1px solid var(--border-soft);}
 .effort-readout strong{color:var(--ink);font-weight:600;}
 
 /* RESOURCE POOL MODAL */
 .resource-list,.cfield-list{display:grid;gap:8px;}
-.resource-item,.cfield-item{display:grid;grid-template-columns:8px 1fr 80px 100px 28px;gap:10px;align-items:center;background:var(--paper-tint);padding:9px 12px;border-radius:4px;border:1px solid var(--border-soft);}
+.resource-item,.cfield-item{display:grid;grid-template-columns:8px 1fr 80px 100px 32px 28px;gap:10px;align-items:center;background:var(--paper-tint);padding:9px 12px;border-radius:4px;border:1px solid var(--border-soft);}
 .resource-item .res-color{width:8px;height:24px;border-radius:2px;cursor:pointer;}
 .resource-item input,.cfield-item input,.cfield-item select{background:var(--card);border:1px solid var(--border);padding:6px 9px;border-radius:3px;font:inherit;font-family:var(--font-body);font-size:12px;}
 .resource-item .res-name{font-weight:500;}
@@ -420,9 +422,10 @@ button.btn:disabled:hover{background:var(--card);border-color:var(--border);}
 .tutorial-footer{padding:14px 24px;border-top:1px solid var(--border-soft);display:flex;align-items:center;gap:10px;}
 .auto-sch-btn{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--ink-3);cursor:pointer;padding:5px 10px;border-radius:5px;border:1px solid var(--border);background:var(--card);transition:all .15s;}
 .auto-sch-btn.active{color:var(--accent);border-color:var(--accent);background:rgba(79,70,229,.06);}
-.modal-xl{width:660px!important;max-width:94vw!important;}
-.modal-lg{width:560px!important;max-width:92vw!important;}
-.modal-body-scroll{max-height:calc(90vh - 160px);overflow-y:auto;}
+.modal-xl{width:min(900px,94vw)!important;max-width:94vw!important;}
+.modal-lg{width:min(680px,94vw)!important;max-width:94vw!important;}
+.modal-body-scroll{overflow-y:auto;flex:1 1 auto;padding:24px;}
+.field-row-3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:20px;}
 
 /* ── Column dividers & resize ──────────────────────── */
 .tph-cols>div,.task-row>div{border-right:1px solid var(--border-soft);}
@@ -1109,8 +1112,9 @@ button.btn:disabled:hover{background:var(--card);border-color:var(--border);}
         <div class="field"><label>Parent (for WBS)</label><select id="f-parent"><option value="">— Top level —</option></select></div>
         <div class="field"><label>Priority</label><select id="f-priority"><option value="critical">Critical</option><option value="high">High</option><option value="medium" selected>Medium</option><option value="low">Low</option></select></div>
         <div class="field"><label>Status</label><select id="f-status"><option value="todo">Not Started</option><option value="progress">In Progress</option><option value="risk">At Risk</option><option value="blocked">Blocked</option><option value="done">Done</option></select></div>
-        <div class="field"><label>Bar Colour</label>
-          <div class="color-picker-row" id="taskColorRow">
+      </div>
+      <div class="field"><label>Bar colour</label>
+        <div class="color-picker-row" id="taskColorRow">
             <span class="color-swatch" data-color="" style="background:var(--paper-tint);border:1.5px dashed var(--border);" title="Default (priority color)"></span>
             <span class="color-swatch" data-color="#0369a1" style="background:#0369a1;" title="Ocean Blue"></span>
             <span class="color-swatch" data-color="#0891b2" style="background:#0891b2;" title="Sky Teal"></span>
@@ -1127,7 +1131,6 @@ button.btn:disabled:hover{background:var(--card);border-color:var(--border);}
             <span class="color-swatch" data-color="#6b7280" style="background:#6b7280;" title="Slate Gray"></span>
             <span class="color-swatch-custom" title="Custom color" style="position:relative;"><input type="color" id="f-color-custom" title="Custom color"><span style="font-size:13px;pointer-events:none;">+</span></span>
           </div>
-        </div>
       </div>
       <div class="field-row">
         <div class="field"><label>Start date</label><input id="f-start" type="date"></div>
@@ -1145,11 +1148,12 @@ button.btn:disabled:hover{background:var(--card);border-color:var(--border);}
       </div>
       <div class="field">
         <label>Dependencies</label>
-        <div id="depsList" style="display:grid;gap:6px;margin-bottom:4px"></div>
+        <div id="depsList" style="display:grid;gap:8px;margin-bottom:6px"></div>
         <div class="assignment-add" id="addDepBtn">+ Add dependency</div>
-        <div style="font-size:10px;color:var(--ink-4);margin-top:2px">FS=Finish→Start  SS=Start→Start  FF=Finish→Finish  SF=Start→Finish</div>
+        <div style="font-size:11px;color:var(--ink-4);margin-top:4px;line-height:1.5">FS=Finish→Start &nbsp; SS=Start→Start &nbsp; FF=Finish→Finish &nbsp; SF=Start→Finish &nbsp;|&nbsp; Lag: +days=delay, −days=lead time (overlap)</div>
       </div>
       <div class="field-row">
+        <div class="field"><label>Task type</label><select id="f-task-type"><option value="fixed_units">Fixed Units (units locked)</option><option value="fixed_duration">Fixed Duration (duration locked)</option><option value="fixed_work">Fixed Work (work locked)</option></select></div>
         <div class="field"><label>Constraint type</label>
           <select id="f-constraint-type">
             <option value="ASAP">ASAP — As Soon As Possible</option>
@@ -1162,16 +1166,16 @@ button.btn:disabled:hover{background:var(--card);border-color:var(--border);}
             <option value="FNLT">Finish No Later Than</option>
           </select>
         </div>
-        <div class="field" id="constraintDateField" style="display:none">
-          <label>Constraint date</label>
-          <input id="f-constraint-date" type="date">
-        </div>
+      </div>
+      <div class="field" id="constraintDateField" style="display:none">
+        <label>Constraint date</label>
+        <input id="f-constraint-date" type="date">
       </div>
       <div class="field">
-        <label>Deadline <span style="font-weight:400;text-transform:none;font-size:10px">(optional — separate from end date)</span></label>
+        <label>Deadline <span style="font-weight:400;text-transform:none;font-size:11px;letter-spacing:0">(optional — separate from end date)</span></label>
         <div style="display:flex;gap:8px;align-items:center">
           <input id="f-deadline" type="date" style="flex:1">
-          <button class="btn" id="clearDeadlineBtn" type="button" style="padding:7px 10px;font-size:11px" title="Clear deadline">× Clear</button>
+          <button class="btn" id="clearDeadlineBtn" type="button" style="padding:9px 12px;font-size:12px;height:40px;white-space:nowrap" title="Clear deadline">× Clear</button>
         </div>
         <div class="expected-hint" id="deadlineHint"></div>
       </div>
@@ -1187,8 +1191,8 @@ button.btn:disabled:hover{background:var(--card);border-color:var(--border);}
   <div class="modal wide">
     <div class="modal-header"><span>Manage Resources</span><span class="meta">Pool · cost rates · capacity</span></div>
     <div class="modal-body">
-      <div style="display:grid;grid-template-columns:8px 1fr 80px 100px 28px;gap:10px;padding:0 12px;font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-4);font-weight:600;font-family:var(--font-mono);">
-        <div></div><div>Name</div><div>Hrs/day</div><div>Cost/hr</div><div></div>
+      <div style="display:grid;grid-template-columns:8px 1fr 80px 100px 32px 28px;gap:10px;padding:0 12px;font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-4);font-weight:600;font-family:var(--font-mono);">
+        <div></div><div>Name</div><div>Hrs/day</div><div>Cost/hr</div><div>Leave</div><div></div>
       </div>
       <div class="resource-list" id="resourceList"></div>
       <button class="add-item-btn" id="addResourceBtn">+ Add Resource</button>
@@ -1318,15 +1322,17 @@ function migrateTask(t){
   t.parentId=t.parentId??null;t.isCollapsed=t.isCollapsed??false;
   t.assignedResources=t.assignedResources??[];
   t.workHours=t.workHours??null;t.customFieldValues=t.customFieldValues??{};
-  // Deps migration: old format was [taskId strings], new is [{taskId,type}]
+  // Deps migration: old format was [taskId strings], new is [{taskId,type,lag}]
   t.deps=t.deps??[];
-  if(t.deps.length&&typeof t.deps[0]==='string')t.deps=t.deps.map(d=>({taskId:d,type:'FS'}));
-  // NEW: constraints, deadline
+  if(t.deps.length&&typeof t.deps[0]==='string')t.deps=t.deps.map(d=>({taskId:d,type:'FS',lag:0}));
+  else t.deps=t.deps.map(d=>typeof d==='string'?{taskId:d,type:'FS',lag:0}:{taskId:d.taskId,type:d.type||'FS',lag:d.lag||0});
+  // NEW: constraints, deadline, taskType
   t.constraintType=t.constraintType??'ASAP';
   t.constraintDate=t.constraintDate??null;
   t.deadline=t.deadline??null;
   t.recurrence=t.recurrence??{type:'none',interval:1,count:null,until:null};
   t.comments=t.comments??[];
+  t.taskType=t.taskType??'fixed_units';
   return t;
 }
 function migrateProject(p){
@@ -1746,13 +1752,13 @@ function getDeadlineStatus(t){
 function autoScheduleCascade(p, changedTaskId){
   if(!state.autoSchedule||!p||!p.tasks)return;
   const byId={};p.tasks.forEach(t=>{byId[t.id]=t;});
-  // Build successor map
+  // Build successor map with lag
   const succs={};
   p.tasks.forEach(t=>{
     (t.deps||[]).forEach(dep=>{
       const predId=typeof dep==='string'?dep:dep.taskId;
       if(!succs[predId])succs[predId]=[];
-      succs[predId].push({taskId:t.id,type:(dep.type||'FS')});
+      succs[predId].push({taskId:t.id,type:(dep.type||'FS'),lag:(dep.lag||0)});
     });
   });
   // BFS from changed task
@@ -1767,16 +1773,17 @@ function autoScheduleCascade(p, changedTaskId){
     const task=byId[tid];if(!task)continue;
     const taskEnd=parseDate(task.end);const taskStart=parseDate(task.start);
     if(!taskEnd||!taskStart)continue;
-    (succs[tid]||[]).forEach(({taskId:succId,type})=>{
+    (succs[tid]||[]).forEach(({taskId:succId,type,lag})=>{
       const succ=byId[succId];if(!succ)return;
       const succDur=succ.start&&succ.end?Math.max(1,daysBetween(parseDate(succ.start),parseDate(succ.end))):1;
+      // lag: positive = delay successor, negative = overlap (lead time)
       let newStart=null;
       switch(type){
-        case'FS': newStart=addDays(taskEnd,1); break;
-        case'SS': newStart=new Date(taskStart); break;
-        case'FF':{const lagDays=succDur-1;newStart=addDays(taskEnd,-lagDays);break;}
-        case'SF': newStart=addDays(taskStart,1); break;
-        default:  newStart=addDays(taskEnd,1);
+        case'FS': newStart=addDays(taskEnd,1+lag); break;
+        case'SS': newStart=addDays(taskStart,lag); break;
+        case'FF':{const lagDays=succDur-1;newStart=addDays(taskEnd,-lagDays+lag);break;}
+        case'SF': newStart=addDays(taskStart,1+lag); break;
+        default:  newStart=addDays(taskEnd,1+(lag||0));
       }
       // Only push forward, never pull back (respects manual positioning)
       if(newStart&&(!parseDate(succ.start)||newStart>parseDate(succ.start))){
@@ -2265,6 +2272,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   if(!localStorage.getItem('tutorialSeen')){
     setTimeout(()=>{openTutorial();localStorage.setItem('tutorialSeen','1');},800);
   }
+  // Wire new features (resource levelling, XLSX export, non-working days, task types)
+  try { _wireNewFeatures(); } catch(e) { console.warn('[PTP] _wireNewFeatures error:', e); }
 });
 function tutNav(d){_tIdx+=d;if(_tIdx>=TUTS.length){closeTutorial();return;}if(_tIdx<0)_tIdx=0;_renderTut();}
 function _renderTut(){
@@ -3563,9 +3572,11 @@ function renderDepList(){
     const div=document.createElement('div');div.className='dep-row';
     const otherTasks=p.tasks.filter(x=>x.id!==editingTaskId);
     let opts=otherTasks.map(x=>`<option value="${x.id}"${x.id===row.taskId?' selected':''}>${escapeHtml(wbsCodeCache[x.id]?wbsCodeCache[x.id]+' ':'')}${escapeHtml(x.name)}</option>`).join('');
-    div.innerHTML=`<select class="dr-pred">${opts}</select><select class="dr-type"><option value="FS"${row.type==='FS'?' selected':''}>FS — Finish→Start</option><option value="SS"${row.type==='SS'?' selected':''}>SS — Start→Start</option><option value="FF"${row.type==='FF'?' selected':''}>FF — Finish→Finish</option><option value="SF"${row.type==='SF'?' selected':''}>SF — Start→Finish</option></select><button class="remove-btn" data-idx="${i}">×</button>`;
+    const lagVal=row.lag||0;
+    div.innerHTML=`<select class="dr-pred">${opts}</select><select class="dr-type"><option value="FS"${row.type==='FS'?' selected':''}>FS — Finish→Start</option><option value="SS"${row.type==='SS'?' selected':''}>SS — Start→Start</option><option value="FF"${row.type==='FF'?' selected':''}>FF — Finish→Finish</option><option value="SF"${row.type==='SF'?' selected':''}>SF — Start→Finish</option></select><div class="lag-wrap"><input class="lag-input" type="number" value="${lagVal}" min="-999" max="999" step="1" title="Lag days (positive=delay, negative=lead)"><span class="lag-lbl">d lag</span></div><button class="remove-btn" data-idx="${i}">×</button>`;
     div.querySelector('.dr-pred').onchange=e=>{currentDepRows[i].taskId=e.target.value;};
     div.querySelector('.dr-type').onchange=e=>{currentDepRows[i].type=e.target.value;};
+    div.querySelector('.lag-input').oninput=e=>{const v=parseInt(e.target.value);currentDepRows[i].lag=isNaN(v)?0:Math.max(-999,Math.min(999,v));};
     div.querySelector('.remove-btn').onclick=()=>{currentDepRows.splice(i,1);renderDepList();};
     list.appendChild(div);
   });
@@ -3627,7 +3638,7 @@ function openTaskModal(taskId){
     }
   }
   // Deps (new format)
-  currentDepRows=(t.deps||[]).map(d=>typeof d==='string'?{taskId:d,type:'FS'}:{...d});
+  currentDepRows=(t.deps||[]).map(d=>typeof d==='string'?{taskId:d,type:'FS',lag:0}:{taskId:d.taskId,type:d.type||'FS',lag:d.lag||0});
   renderDepList();
   // Constraint
   const ctSel=document.getElementById('f-constraint-type');if(ctSel)ctSel.value=t.constraintType||'ASAP';
@@ -3720,7 +3731,7 @@ function saveTaskFromModal(){
     else{const ci=document.getElementById('f-color-custom');t.color=ci&&ci.value&&ci.value!=='#0369a1'?ci.value:'';}
   }
   // Deps (new format)
-  t.deps=currentDepRows.filter(r=>r.taskId).map(r=>({taskId:r.taskId,type:r.type||'FS'}));
+  t.deps=currentDepRows.filter(r=>r.taskId).map(r=>({taskId:r.taskId,type:r.type||'FS',lag:r.lag||0}));
   // Constraint
   const ctEl=document.getElementById('f-constraint-type');
   const ctVal=ctEl?ctEl.value:'ASAP';
@@ -3753,11 +3764,12 @@ function renderResourceList(){
   if(!p.resources.length){list.innerHTML='<div class="empty-list-msg">No resources yet. Click + Add Resource below.</div>';return;}
   p.resources.forEach((r,i)=>{
     const item=document.createElement('div');item.className='resource-item';
-    item.innerHTML=`<div class="res-color" style="background:${r.color||'#4F46E5'}" title="Click to change color"></div><input class="res-name" type="text" value="${escapeHtml(r.name)}" placeholder="Resource name"><input class="res-hrs" type="number" min=".5" max="24" step=".5" value="${r.hrsPerDay||r.hoursPerDay||8}" placeholder="8"><input class="res-cost" type="number" min="0" value="${r.costPerHr||r.costPerHour||0}" placeholder="0"><button class="remove-btn btn btn-danger" data-idx="${i}">×</button>`;
+    item.innerHTML=`<div class="res-color" style="background:${r.color||'#4F46E5'}" title="Click to change color"></div><input class="res-name" type="text" value="${escapeHtml(r.name)}" placeholder="Resource name"><input class="res-hrs" type="number" min=".5" max="24" step=".5" value="${r.hrsPerDay||r.hoursPerDay||8}" placeholder="8"><input class="res-cost" type="number" min="0" value="${r.costPerHr||r.costPerHour||0}" placeholder="0"><button class="btn" title="Leave calendar" data-resid="${r.id}" style="font-size:11px;padding:4px 8px">📅</button><button class="remove-btn btn btn-danger" data-idx="${i}">×</button>`;
     item.querySelector('.res-color').onclick=()=>{const colors=RESOURCE_COLORS;const idx=colors.indexOf(r.color);r.color=colors[(idx+1)%colors.length];renderResourceList();};
     item.querySelector('.res-name').oninput=e=>{r.name=e.target.value;};
     item.querySelector('.res-hrs').oninput=e=>{r.hrsPerDay=r.hoursPerDay=parseFloat(e.target.value)||8;};
     item.querySelector('.res-cost').oninput=e=>{r.costPerHr=r.costPerHour=parseFloat(e.target.value)||0;};
+    item.querySelector('[data-resid]').onclick=()=>openLeaveCalendar(r.id);
     item.querySelector('.remove-btn').onclick=()=>{if(!confirm(`Remove resource "${r.name}"? Assignments to this resource will be cleared.`))return;p.resources.splice(i,1);p.tasks.forEach(t=>{t.assignedResources=(t.assignedResources||[]).filter(a=>a.resourceId!==r.id);});renderResourceList();};
     list.appendChild(item);
   });
@@ -4479,6 +4491,25 @@ function showToast(msg, duration) {
     <div class="modal-footer"><button class="btn" onclick="closeBaselineManager()">Close</button></div>
   </div>
 </div>
+<!-- NON-WORKING DAYS MODAL -->
+<div class="modal-overlay" id="nonWorkingOverlay" style="display:none">
+  <div class="modal modal-lg">
+    <div class="modal-header"><span>Non-working Days</span><span class="meta">Holidays · weekends · project calendar</span>
+      <button class="icon-btn" onclick="closeNonWorkingDaysModal()">✕</button>
+    </div>
+    <div class="modal-body modal-body-scroll">
+      <div id="nwdList" style="margin-bottom:12px"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end;margin-top:8px">
+        <div><label style="font-size:11px;font-weight:600;color:var(--ink-3);display:block;margin-bottom:3px">Date</label><input type="date" id="nwdDate" style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:5px;font:inherit;font-size:12px"></div>
+        <div><label style="font-size:11px;font-weight:600;color:var(--ink-3);display:block;margin-bottom:3px">Reason / Holiday name</label><input id="nwdReason" placeholder="Diwali, Christmas…" style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:5px;font:inherit;font-size:12px"></div>
+        <button class="btn btn-primary" style="white-space:nowrap" onclick="addNonWorkingDay()">Add</button>
+      </div>
+      <div style="font-size:11px;color:var(--ink-4);margin-top:8px">These dates are skipped when calculating working days and scheduling. The scheduling engine will not place task work on these days.</div>
+    </div>
+    <div class="modal-footer"><div></div><div class="modal-footer-right"><button class="btn btn-primary" onclick="closeNonWorkingDaysModal()">Done</button></div></div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="leaveOverlay" style="display:none">
   <div class="modal modal-lg">
     <div class="modal-header"><span id="leaveResName">Leave Calendar</span>
@@ -5154,7 +5185,7 @@ function rmExport() {
 
 // ════════════════════════════════════════════════════════════════
 // FEATURE 2 — ANALYTICS DASHBOARD
-// KPI cards, burndown proxy, status heatmap, portfolio health
+// KPI cards, real burndown chart, status heatmap, portfolio health
 // ════════════════════════════════════════════════════════════════
 
 function renderDashboard() {
@@ -5279,7 +5310,112 @@ function renderDashboard() {
     <div class="dash-chart-card" style="grid-column:1/-1">
       <div class="dash-chart-title">Portfolio Health — ${projs.length} Project${projs.length !== 1 ? 's' : ''}</div>
       ${projHealth || '<div style="color:var(--ink-4);font-size:12px;padding:8px 0">No projects yet.</div>'}
+    </div>
+    <div class="dash-chart-card" style="grid-column:1/-1" id="burndownCard">
+      <div class="dash-chart-title">Burndown Chart — Tasks remaining over time</div>
+      <div id="burndownChartWrap"></div>
     </div>`;
+
+  // ── Real burndown chart ──────────────────────────────────────────
+  _renderBurndownChart(allTasks, today);
+}
+
+// ── Real Burndown Chart Implementation ──────────────────────────────
+function _renderBurndownChart(allTasks, today) {
+  const wrap = document.getElementById('burndownChartWrap');
+  if (!wrap) return;
+  if (!allTasks.length) { wrap.innerHTML = '<div style="color:var(--ink-4);font-size:12px;padding:8px 0">No tasks to chart.</div>'; return; }
+
+  // Find project date range
+  const starts = allTasks.map(t => parseDate(t.start)).filter(Boolean);
+  const ends = allTasks.map(t => parseDate(t.end)).filter(Boolean);
+  if (!starts.length || !ends.length) { wrap.innerHTML = '<div style="color:var(--ink-4);font-size:12px;padding:8px 0">Tasks need start/end dates.</div>'; return; }
+
+  const minDate = new Date(Math.min(...starts));
+  const maxDate = new Date(Math.max(Math.max(...ends), today));
+  const totalDays = Math.max(1, daysBetween(minDate, maxDate));
+  const total = allTasks.length;
+
+  // Build ideal burndown: straight line from total to 0
+  // Build actual burndown: count remaining (not-done) tasks at each date checkpoint
+  const W = 600, H = 140, PAD = { l: 36, r: 16, t: 12, b: 32 };
+  const cW = W - PAD.l - PAD.r, cH = H - PAD.t - PAD.b;
+
+  // Sample every 7 days + today
+  const points = [];
+  for (let d = 0; d <= totalDays; d += Math.max(1, Math.floor(totalDays / 20))) {
+    const date = addDays(minDate, d);
+    const remaining = allTasks.filter(t => {
+      if (t.status === 'done') {
+        const endD = parseDate(t.end);
+        return endD && endD > date; // completed after this date = still open at this date
+      }
+      return true; // not done
+    }).length;
+    points.push({ d, date, remaining });
+  }
+  // Always include today and final
+  const todayD = Math.max(0, Math.min(totalDays, daysBetween(minDate, today)));
+  if (!points.find(p => p.d === todayD)) {
+    const remaining = allTasks.filter(t => t.status !== 'done').length;
+    points.push({ d: todayD, date: today, remaining });
+    points.sort((a, b) => a.d - b.d);
+  }
+
+  const xScale = d => PAD.l + (d / totalDays) * cW;
+  const yScale = r => PAD.t + cH - (r / Math.max(total, 1)) * cH;
+
+  // Ideal line path
+  const idealPath = `M ${xScale(0)} ${yScale(total)} L ${xScale(totalDays)} ${yScale(0)}`;
+
+  // Actual path
+  const actualPath = 'M ' + points.map(p => `${xScale(p.d).toFixed(1)} ${yScale(p.remaining).toFixed(1)}`).join(' L ');
+
+  // Axis labels
+  const xLabels = [];
+  for (let d = 0; d <= totalDays; d += Math.max(1, Math.floor(totalDays / 5))) {
+    const date = addDays(minDate, d);
+    xLabels.push(`<text x="${xScale(d).toFixed(1)}" y="${H - 6}" text-anchor="middle" font-size="9" fill="var(--ink-4)">${fmtDate(date)}</text>`);
+  }
+  const yLabels = [];
+  for (let r = 0; r <= total; r += Math.max(1, Math.floor(total / 4))) {
+    yLabels.push(`<text x="${PAD.l - 4}" y="${yScale(r).toFixed(1) }" dominant-baseline="middle" text-anchor="end" font-size="9" fill="var(--ink-4)">${r}</text>`);
+  }
+
+  // Today vertical line
+  const todayX = xScale(todayD).toFixed(1);
+  const todayLine = todayD >= 0 && todayD <= totalDays
+    ? `<line x1="${todayX}" y1="${PAD.t}" x2="${todayX}" y2="${PAD.t + cH}" stroke="#0369a1" stroke-width="1" stroke-dasharray="3,3" opacity=".6"/>
+       <text x="${todayX}" y="${PAD.t - 2}" text-anchor="middle" font-size="9" fill="#0369a1">Today</text>` : '';
+
+  wrap.innerHTML = `
+    <svg viewBox="0 0 ${W} ${H}" width="100%" style="max-height:160px;display:block">
+      <!-- grid lines -->
+      ${[...Array(5)].map((_,i) => {
+        const r = Math.round(total * i / 4);
+        const y = yScale(r).toFixed(1);
+        return `<line x1="${PAD.l}" y1="${y}" x2="${PAD.l + cW}" y2="${y}" stroke="var(--border-soft)" stroke-width="0.5"/>`;
+      }).join('')}
+      <!-- axes -->
+      <line x1="${PAD.l}" y1="${PAD.t}" x2="${PAD.l}" y2="${PAD.t + cH}" stroke="var(--border)" stroke-width="1"/>
+      <line x1="${PAD.l}" y1="${PAD.t + cH}" x2="${PAD.l + cW}" y2="${PAD.t + cH}" stroke="var(--border)" stroke-width="1"/>
+      <!-- ideal line -->
+      <path d="${idealPath}" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="5,4" fill="none" opacity=".7"/>
+      <!-- actual line -->
+      <path d="${actualPath}" stroke="#0369a1" stroke-width="2" fill="none"/>
+      <!-- actual area fill -->
+      <path d="${actualPath} L ${xScale(points[points.length-1].d).toFixed(1)} ${yScale(0).toFixed(1)} L ${xScale(points[0].d).toFixed(1)} ${yScale(0).toFixed(1)} Z" fill="#0369a1" fill-opacity=".08"/>
+      <!-- today line -->
+      ${todayLine}
+      <!-- labels -->
+      ${xLabels.join('')}
+      ${yLabels.join('')}
+      <!-- legend -->
+      <line x1="${PAD.l + cW - 110}" y1="${PAD.t + 8}" x2="${PAD.l + cW - 90}" y2="${PAD.t + 8}" stroke="#9ca3af" stroke-dasharray="4,3" stroke-width="1.5"/>
+      <text x="${PAD.l + cW - 86}" y="${PAD.t + 11}" font-size="9" fill="var(--ink-4)">Ideal</text>
+      <line x1="${PAD.l + cW - 50}" y1="${PAD.t + 8}" x2="${PAD.l + cW - 30}" y2="${PAD.t + 8}" stroke="#0369a1" stroke-width="2"/>
+      <text x="${PAD.l + cW - 26}" y="${PAD.t + 11}" font-size="9" fill="var(--ink-4)">Actual</text>
+    </svg>`;
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -5460,8 +5596,573 @@ function exportReportCSV() {
 // renderAll dashboard filter update integrated below
 
 
-// ═══════════════════════════════════════════════════════════════
-// INTEGRITY CHECK v1.0 — Runs once at startup
+// ════════════════════════════════════════════════════════════════
+// TASK 2 — REAL RESOURCE LEVELLING
+// Detects overallocated resources and shifts tasks to resolve conflicts.
+// Respects: dependency order, constraints, ASAP/ALAP. BFS successor order.
+// ════════════════════════════════════════════════════════════════
+function levelResources() {
+  const p = getProject();
+  if (!p || !p.tasks.length) { alert('No project or tasks to level.'); return; }
+  if (!p.resources.length) { alert('No resources defined. Add resources first via ⋯ → Manage resources.'); return; }
+
+  pushUndo();
+
+  // Build topological order respecting dependencies
+  const byId = {};
+  p.tasks.forEach(t => byId[t.id] = t);
+
+  // Kahn's algorithm for topo sort
+  const inDegree = {};
+  const adjList = {}; // pred → [succ]
+  p.tasks.forEach(t => { inDegree[t.id] = 0; adjList[t.id] = []; });
+  p.tasks.forEach(t => {
+    (t.deps || []).forEach(dep => {
+      const predId = typeof dep === 'string' ? dep : dep.taskId;
+      if (byId[predId]) { adjList[predId].push(t.id); inDegree[t.id]++; }
+    });
+  });
+  const queue = p.tasks.filter(t => inDegree[t.id] === 0).map(t => t.id);
+  const topoOrder = [];
+  const visited = new Set();
+  while (queue.length) {
+    const id = queue.shift();
+    if (visited.has(id)) continue;
+    visited.add(id);
+    topoOrder.push(id);
+    (adjList[id] || []).forEach(succId => {
+      inDegree[succId]--;
+      if (inDegree[succId] === 0) queue.push(succId);
+    });
+  }
+  // Any tasks not reached (cycles) — append in original order
+  p.tasks.forEach(t => { if (!visited.has(t.id)) topoOrder.push(t.id); });
+
+  // For each resource: maintain a "next available date" cursor
+  // Process tasks in topo order — if a task's resource is busy, shift it forward
+  const resourceNextFree = {}; // resourceId → Date (next day resource is free)
+
+  topoOrder.forEach(tid => {
+    const t = byId[tid];
+    if (!t || !t.start || !t.end || t.isMilestone) return;
+    // Constraints: skip MSO/MFO/SNET/SNLT tasks
+    if (t.constraintType && ['MSO','MFO','SNET','SNLT','FNET','FNLT'].includes(t.constraintType)) return;
+
+    if (!t.assignedResources || !t.assignedResources.length) return;
+
+    const dur = Math.max(1, daysBetween(parseDate(t.start), parseDate(t.end)));
+
+    // Find earliest start where ALL assigned resources are free AND after all predecessors finish
+    let earliestStart = parseDate(t.start);
+
+    // Respect predecessors
+    (t.deps || []).forEach(dep => {
+      const predId = typeof dep === 'string' ? dep : dep.taskId;
+      const lag = (dep.lag) || 0;
+      const pred = byId[predId];
+      if (!pred || !pred.end) return;
+      const type = dep.type || 'FS';
+      let needed;
+      switch(type) {
+        case 'FS': needed = addDays(parseDate(pred.end), 1 + lag); break;
+        case 'SS': needed = addDays(parseDate(pred.start), lag); break;
+        case 'FF': needed = addDays(parseDate(pred.end), lag - dur + 1); break;
+        case 'SF': needed = addDays(parseDate(pred.start), 1 + lag); break;
+        default: needed = addDays(parseDate(pred.end), 1);
+      }
+      if (needed && needed > earliestStart) earliestStart = new Date(needed);
+    });
+
+    // Respect resource availability: find first slot where all resources are free for `dur` working days
+    // For each assigned resource, check resourceNextFree
+    t.assignedResources.forEach(a => {
+      const rFree = resourceNextFree[a.resourceId];
+      if (rFree && rFree > earliestStart) earliestStart = new Date(rFree);
+    });
+
+    // Skip to next working day if needed
+    while (earliestStart.getDay() === 0 || earliestStart.getDay() === 6) {
+      earliestStart = addDays(earliestStart, 1);
+    }
+    // Also skip project non-working days
+    const _p2 = p;
+    while (_isProjectNonWorking(_p2, earliestStart)) {
+      earliestStart = addDays(earliestStart, 1);
+    }
+
+    // Only shift forward, never back
+    const origStart = parseDate(t.start);
+    if (earliestStart > origStart) {
+      t.start = isoFromDate(earliestStart);
+      t.end = isoFromDate(addDays(earliestStart, dur - 1));
+    }
+
+    // Update resourceNextFree: the day after this task ends
+    const taskEnd = parseDate(t.end);
+    t.assignedResources.forEach(a => {
+      const nextFree = addDays(taskEnd, 1);
+      if (!resourceNextFree[a.resourceId] || nextFree > resourceNextFree[a.resourceId]) {
+        resourceNextFree[a.resourceId] = nextFree;
+      }
+    });
+  });
+
+  saveState();
+  renderAll();
+  const msg = 'Resource levelling complete. Tasks shifted to resolve conflicts.';
+  if (typeof flashStatus === 'function') flashStatus(msg); else alert(msg);
+}
+
+// ════════════════════════════════════════════════════════════════
+// TASK 7 — FIXED TASK TYPES (Fixed Units / Fixed Duration / Fixed Work)
+// Recalculates the third variable when the other two change.
+// Called from the task modal on change of duration or resource allocation.
+// taskType stored on task: 'fixed_units' | 'fixed_duration' | 'fixed_work'
+// ════════════════════════════════════════════════════════════════
+function applyFixedTaskType(task, changedField) {
+  // changedField: 'duration' | 'units' | 'work'
+  if (!task || task.isMilestone) return;
+  const type = task.taskType || 'fixed_units';
+  const s = parseDate(task.start), e = parseDate(task.end);
+  if (!s || !e) return;
+  const wDays = workingDaysBetween(s, e);
+
+  const primaryRes = (task.assignedResources || [])[0];
+  const r = primaryRes ? getResource(primaryRes.resourceId) : null;
+  const hpd = r ? (r.hrsPerDay || 8) : 8;
+  const units = primaryRes ? (primaryRes.allocation || 100) / 100 : 1;
+
+  switch (type) {
+    case 'fixed_units':
+      // Units fixed: Work = Duration × Units × hpd. Duration changes → work changes.
+      if (changedField === 'duration') {
+        task.workHours = Math.round(wDays * units * hpd * 10) / 10;
+      } else if (changedField === 'work' && task.workHours && units * hpd > 0) {
+        // Work changed → recalc duration (shift end date)
+        const newDays = Math.ceil(task.workHours / (units * hpd));
+        task.end = isoFromDate(addDays(s, newDays - 1));
+      }
+      break;
+    case 'fixed_duration':
+      // Duration fixed: if units change → work changes
+      if (changedField === 'units') {
+        task.workHours = Math.round(wDays * units * hpd * 10) / 10;
+      } else if (changedField === 'work' && task.workHours && wDays > 0) {
+        // Work changed → recalc units (allocation %)
+        const newUnits = task.workHours / (wDays * hpd);
+        if (primaryRes) primaryRes.allocation = Math.round(newUnits * 100);
+      }
+      break;
+    case 'fixed_work':
+      // Work fixed: if duration changes → units change; if units change → duration changes
+      if (!task.workHours) break;
+      if (changedField === 'duration' && wDays > 0 && hpd > 0) {
+        const newUnits2 = task.workHours / (wDays * hpd);
+        if (primaryRes) primaryRes.allocation = Math.round(newUnits2 * 100);
+      } else if (changedField === 'units' && units * hpd > 0) {
+        const newDays2 = Math.ceil(task.workHours / (units * hpd));
+        task.end = isoFromDate(addDays(s, newDays2 - 1));
+      }
+      break;
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+// TASK 8 — CUSTOM NON-WORKING DAYS
+// p.nonWorkingDays = [{date:'YYYY-MM-DD', reason:'Holiday name'}]
+// p.workWeekend = {sat: false, sun: false}  (default both false)
+// ════════════════════════════════════════════════════════════════
+function migrateProjectNonWorking(p) {
+  p.nonWorkingDays = p.nonWorkingDays ?? [];
+  p.workWeekend = p.workWeekend ?? { sat: false, sun: false };
+  return p;
+}
+
+function _isProjectNonWorking(p, date) {
+  if (!p) return false;
+  const dow = date.getDay();
+  const ws = p.workWeekend || {};
+  if (dow === 6 && !ws.sat) return true;
+  if (dow === 0 && !ws.sun) return true;
+  const iso = isoFromDate(date);
+  return (p.nonWorkingDays || []).some(nd => nd.date === iso);
+}
+
+// Extended workingDaysBetween that respects project non-working days
+function workingDaysBetweenP(p, s, e) {
+  if (!s || !e) return 0;
+  let d = 0;
+  const cur = new Date(s);
+  while (cur <= e) {
+    if (!_isProjectNonWorking(p, cur)) d++;
+    cur.setDate(cur.getDate() + 1);
+  }
+  return d;
+}
+
+function openNonWorkingDaysModal() {
+  const p = getProject();
+  if (!p) { alert('Select a project first.'); return; }
+  migrateProjectNonWorking(p);
+  renderNonWorkingDaysList();
+  const el = document.getElementById('nonWorkingOverlay');
+  if (el) el.style.display = 'flex';
+}
+function closeNonWorkingDaysModal() {
+  const el = document.getElementById('nonWorkingOverlay');
+  if (el) el.style.display = 'none';
+  saveState();
+  renderAll();
+}
+function renderNonWorkingDaysList() {
+  const p = getProject(); if (!p) return;
+  migrateProjectNonWorking(p);
+  const list = document.getElementById('nwdList'); if (!list) return;
+  const ws = p.workWeekend || {};
+  list.innerHTML = `
+    <div style="display:flex;gap:16px;margin-bottom:10px;padding:8px 12px;background:var(--paper-tint);border-radius:6px;border:1px solid var(--border-soft)">
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="checkbox" id="nwdSat"${ws.sat?' checked':''} onchange="(()=>{const p=getProject();if(p){p.workWeekend=p.workWeekend||{};p.workWeekend.sat=document.getElementById('nwdSat').checked;}})()"> Work Saturdays</label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="checkbox" id="nwdSun"${ws.sun?' checked':''} onchange="(()=>{const p=getProject();if(p){p.workWeekend=p.workWeekend||{};p.workWeekend.sun=document.getElementById('nwdSun').checked;}})()"> Work Sundays</label>
+    </div>
+    <div style="font-size:11px;font-weight:600;color:var(--ink-4);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">Custom holidays / non-working dates</div>
+  `;
+  const nwd = p.nonWorkingDays || [];
+  if (!nwd.length) {
+    list.innerHTML += '<div style="font-size:12px;color:var(--ink-4);padding:4px 0">No custom non-working dates. Add one below.</div>';
+  } else {
+    nwd.forEach(nd => {
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:7px 12px;background:rgba(220,38,38,.05);border-radius:6px;margin-bottom:4px;border:1px solid rgba(220,38,38,.12)';
+      row.innerHTML = `<div style="flex:1"><span style="font-weight:600;font-size:12px">${escapeHtml(nd.reason||'Non-working day')}</span><span style="font-family:var(--font-mono);font-size:11px;color:var(--ink-3);margin-left:10px">${nd.date}</span></div><button class="btn btn-danger" onclick="(()=>{const p=getProject();if(p){p.nonWorkingDays=p.nonWorkingDays.filter(x=>x.id!=='${nd.id}');renderNonWorkingDaysList();}})()">×</button>`;
+      list.appendChild(row);
+    });
+  }
+}
+function addNonWorkingDay() {
+  const p = getProject(); if (!p) return;
+  migrateProjectNonWorking(p);
+  const dateEl = document.getElementById('nwdDate');
+  const reasonEl = document.getElementById('nwdReason');
+  const date = dateEl ? dateEl.value : '';
+  const reason = reasonEl ? reasonEl.value.trim() : '';
+  if (!date) { alert('Pick a date.'); return; }
+  if ((p.nonWorkingDays || []).some(nd => nd.date === date)) { alert('That date is already marked non-working.'); return; }
+  p.nonWorkingDays.push({ date, reason: reason || 'Holiday', id: uid('nwd') });
+  if (dateEl) dateEl.value = '';
+  if (reasonEl) reasonEl.value = '';
+  renderNonWorkingDaysList();
+}
+
+// ════════════════════════════════════════════════════════════════
+// TASK 6 — REAL XLSX EXPORT (no external library required)
+// Generates a proper Office Open XML .xlsx file using base64-encoded
+// ZIP structure. No SheetJS dependency — pure in-browser generation.
+// ════════════════════════════════════════════════════════════════
+function exportXLSX() {
+  const projs = state.projects || [];
+  if (!projs.length) { alert('No projects to export.'); return; }
+
+  // Build rows
+  const headers = ['Project','WBS','Task Name','Status','Priority','Start','End','Duration (days)','Progress %','Owner / Resources','Milestone','Deadline','Deps','Notes'];
+  const allRows = [headers];
+
+  projs.forEach(proj => {
+    const wbs = {};
+    const tree = buildWBSTree(proj.tasks || []);
+    let counter = [0];
+    function assignWBS(taskIds, prefix) {
+      taskIds.forEach((id, i) => {
+        const code = prefix ? `${prefix}.${i + 1}` : `${i + 1}`;
+        wbs[id] = code;
+        if (tree.childrenOf[id]) assignWBS(tree.childrenOf[id], code);
+      });
+    }
+    assignWBS(tree.rootIds, '');
+
+    (proj.tasks || []).forEach(t => {
+      const s = parseDate(t.start), e = parseDate(t.end);
+      const dur = s && e ? daysBetween(s, e) + 1 : '';
+      const resources = (t.assignedResources || []).map(a => { const r = getResource(a.resourceId); return r ? r.name : '?'; }).join(', ') || t.owner || '';
+      const deps = (t.deps || []).map(d => {
+        const predId = typeof d === 'string' ? d : d.taskId;
+        const type = d.type || 'FS';
+        const lag = d.lag ? (d.lag > 0 ? `+${d.lag}d` : `${d.lag}d`) : '';
+        const pred = (proj.tasks || []).find(x => x.id === predId);
+        return pred ? `${pred.name} [${type}${lag}]` : predId;
+      }).join('; ');
+      allRows.push([
+        proj.name,
+        wbs[t.id] || '',
+        t.name || '',
+        t.status || '',
+        t.priority || '',
+        t.start || '',
+        t.end || '',
+        dur,
+        t.progress || 0,
+        resources,
+        t.isMilestone ? 'Yes' : 'No',
+        t.deadline || '',
+        deps,
+        (t.notes || '').replace(/\n/g, ' ')
+      ]);
+    });
+  });
+
+  // Escape cell value for XML
+  const esc = v => String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;');
+
+  // Build shared strings
+  const strs = [];
+  const strIdx = {};
+  function si(v) {
+    const s = String(v ?? '');
+    if (strIdx[s] === undefined) { strIdx[s] = strs.length; strs.push(s); }
+    return strIdx[s];
+  }
+
+  // Pre-register all strings
+  allRows.forEach(row => row.forEach(cell => {
+    if (typeof cell === 'string') si(cell);
+  }));
+
+  // Build worksheet XML
+  const colLetter = n => { let s = ''; while (n >= 0) { s = String.fromCharCode((n % 26) + 65) + s; n = Math.floor(n / 26) - 1; } return s; };
+  let wsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>`;
+  allRows.forEach((row, ri) => {
+    wsXml += `<row r="${ri + 1}">`;
+    row.forEach((cell, ci) => {
+      const addr = colLetter(ci) + (ri + 1);
+      if (typeof cell === 'number' || (typeof cell === 'string' && cell !== '' && !isNaN(Number(cell)) && cell.trim() !== '')) {
+        wsXml += `<c r="${addr}" t="n"><v>${Number(cell)}</v></c>`;
+      } else {
+        const idx = si(String(cell ?? ''));
+        wsXml += `<c r="${addr}" t="s"><v>${idx}</v></c>`;
+      }
+    });
+    wsXml += `</row>`;
+  });
+  wsXml += `</sheetData></worksheet>`;
+
+  // Shared strings XML
+  const ssXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="${strs.length}" uniqueCount="${strs.length}">${strs.map(s => `<si><t xml:space="preserve">${esc(s)}</t></si>`).join('')}</sst>`;
+
+  // Workbook XML
+  const wbXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Project Tracker" sheetId="1" r:id="rId1"/></sheets></workbook>`;
+
+  // Relationships
+  const wbRels = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings" Target="sharedStrings.xml"/></Relationships>`;
+  const topRels = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>`;
+  const contentTypes = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/sharedStrings.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml"/></Types>`;
+
+  // Use JSZip if available, otherwise fall back to a minimal ZIP builder
+  function _buildXLSX() {
+    // Minimal ZIP builder — stores files uncompressed (method 0)
+    function strToBytes(s) {
+      const b = new Uint8Array(s.length);
+      for (let i = 0; i < s.length; i++) b[i] = s.charCodeAt(i) & 0xFF;
+      return b;
+    }
+    function crc32(bytes) {
+      let c = 0xFFFFFFFF;
+      const t = new Uint32Array(256);
+      for (let i = 0; i < 256; i++) { let v = i; for (let j = 0; j < 8; j++) v = (v & 1) ? (0xEDB88320 ^ (v >>> 1)) : (v >>> 1); t[i] = v; }
+      for (let i = 0; i < bytes.length; i++) c = t[(c ^ bytes[i]) & 0xFF] ^ (c >>> 8);
+      return (c ^ 0xFFFFFFFF) >>> 0;
+    }
+    function u16(n) { return [n & 0xFF, (n >> 8) & 0xFF]; }
+    function u32(n) { return [n & 0xFF, (n >> 8) & 0xFF, (n >> 16) & 0xFF, (n >> 24) & 0xFF]; }
+
+    const files = [
+      { name: '[Content_Types].xml', data: contentTypes },
+      { name: '_rels/.rels', data: topRels },
+      { name: 'xl/workbook.xml', data: wbXml },
+      { name: 'xl/_rels/workbook.xml.rels', data: wbRels },
+      { name: 'xl/worksheets/sheet1.xml', data: wsXml },
+      { name: 'xl/sharedStrings.xml', data: ssXml },
+    ];
+
+    const localHeaders = [];
+    let offset = 0;
+    const parts = [];
+
+    files.forEach(f => {
+      const nameBytes = strToBytes(f.name);
+      const dataBytes = strToBytes(f.data);
+      const crc = crc32(dataBytes);
+      const lh = [
+        0x50,0x4B,0x03,0x04, // signature
+        0x14,0x00,           // version needed
+        0x00,0x00,           // flags
+        0x00,0x00,           // compression (stored)
+        0x00,0x00,           // mod time
+        0x00,0x00,           // mod date
+        ...u32(crc),
+        ...u32(dataBytes.length),
+        ...u32(dataBytes.length),
+        ...u16(nameBytes.length),
+        0x00,0x00,           // extra field length
+        ...nameBytes,
+      ];
+      localHeaders.push({ name: f.name, nameBytes, crc, size: dataBytes.length, offset });
+      parts.push(new Uint8Array(lh));
+      parts.push(dataBytes);
+      offset += lh.length + dataBytes.length;
+    });
+
+    // Central directory
+    const cdParts = [];
+    let cdSize = 0;
+    localHeaders.forEach(h => {
+      const cd = [
+        0x50,0x4B,0x01,0x02, // signature
+        0x14,0x00,           // version made by
+        0x14,0x00,           // version needed
+        0x00,0x00,           // flags
+        0x00,0x00,           // compression
+        0x00,0x00,           // mod time
+        0x00,0x00,           // mod date
+        ...u32(h.crc),
+        ...u32(h.size),
+        ...u32(h.size),
+        ...u16(h.nameBytes.length),
+        0x00,0x00,           // extra
+        0x00,0x00,           // comment
+        0x00,0x00,           // disk start
+        0x00,0x00,           // int attribs
+        0x00,0x00,0x00,0x00, // ext attribs
+        ...u32(h.offset),
+        ...h.nameBytes,
+      ];
+      cdParts.push(new Uint8Array(cd));
+      cdSize += cd.length;
+    });
+
+    // End of central directory
+    const eocd = [
+      0x50,0x4B,0x05,0x06,
+      0x00,0x00, 0x00,0x00,
+      ...u16(files.length), ...u16(files.length),
+      ...u32(cdSize), ...u32(offset),
+      0x00,0x00,
+    ];
+
+    // Concatenate all parts
+    const totalLen = parts.reduce((a, b) => a + b.length, 0) + cdParts.reduce((a, b) => a + b.length, 0) + eocd.length;
+    const out = new Uint8Array(totalLen);
+    let pos = 0;
+    [...parts, ...cdParts, new Uint8Array(eocd)].forEach(p => { out.set(p, pos); pos += p.length; });
+    return out;
+  }
+
+  const bytes = _buildXLSX();
+  const blob = new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `project-tracker-${todayISO()}.xlsx`;
+  a.click();
+  if (typeof showToast === 'function') showToast('✓ Exported as XLSX');
+  else if (typeof flashStatus === 'function') flashStatus('✓ Exported as project-tracker.xlsx');
+}
+
+// ════════════════════════════════════════════════════════════════
+// WIRE UP: resource levelling button, non-working days modal,
+// XLSX export button, fixed task type selectors in resource modal
+// ════════════════════════════════════════════════════════════════
+function _wireNewFeatures() {
+  // Resource levelling button (add to ⋯ more menu)
+  const moreMenu = document.getElementById('moreMenu');
+  if (moreMenu && !document.getElementById('levelResourcesBtn')) {
+    const btn = document.createElement('div');
+    btn.className = 'more-item';
+    btn.id = 'levelResourcesBtn';
+    btn.textContent = '⚖ Level Resources';
+    btn.onclick = () => { moreMenu.classList.remove('open'); levelResources(); };
+    // Insert before the last separator/delete button
+    const delBtn = document.getElementById('deleteProjectBtn');
+    if (delBtn) moreMenu.insertBefore(btn, delBtn);
+    else moreMenu.appendChild(btn);
+  }
+
+  // Non-working days button (add to ⋯ more menu)
+  if (moreMenu && !document.getElementById('manageNonWorkingBtn')) {
+    const btn2 = document.createElement('div');
+    btn2.className = 'more-item';
+    btn2.id = 'manageNonWorkingBtn';
+    btn2.textContent = '📅 Non-working Days';
+    btn2.onclick = () => { moreMenu.classList.remove('open'); openNonWorkingDaysModal(); };
+    const delBtn = document.getElementById('deleteProjectBtn');
+    if (delBtn) moreMenu.insertBefore(btn2, delBtn);
+    else moreMenu.appendChild(btn2);
+  }
+
+  // XLSX export button in ⋯ more menu
+  if (moreMenu && !document.getElementById('exportXLSXBtn')) {
+    const btn3 = document.createElement('div');
+    btn3.className = 'more-item';
+    btn3.id = 'exportXLSXBtn';
+    btn3.textContent = '⬇ Export XLSX';
+    btn3.onclick = () => { moreMenu.classList.remove('open'); exportXLSX(); };
+    const delBtn = document.getElementById('deleteProjectBtn');
+    if (delBtn) moreMenu.insertBefore(btn3, delBtn);
+    else moreMenu.appendChild(btn3);
+  }
+
+  // Migrate non-working days into existing projects
+  (state.projects || []).forEach(p => migrateProjectNonWorking(p));
+
+  // Task type select is in static modal HTML — no injection needed.
+}
+
+// ════════════════════════════════════════════════════════════════
+// TASK 5 — Leave Calendar is fully implemented in the codebase.
+// The UI (leaveOverlay) already exists. Wire the Leave Calendar
+// button per resource in renderResourceList via _wireNewFeatures.
+// ════════════════════════════════════════════════════════════════
+
+// ── Patch openTaskModal to load taskType ────────────────────────
+const _origOpenTaskModal = openTaskModal;
+openTaskModal = function(taskId) {
+  _origOpenTaskModal(taskId);
+  const p = getProject(); if (!p) return;
+  const t = p.tasks.find(x => x.id === taskId); if (!t) return;
+  const ttSel = document.getElementById('f-task-type');
+  if (ttSel) ttSel.value = t.taskType || 'fixed_units';
+};
+
+// ── Patch saveTaskFromModal to save taskType ────────────────────
+const _origSaveTask = saveTaskFromModal;
+saveTaskFromModal = function() {
+  const p = getProject(); const t = p && editingTaskId ? p.tasks.find(x => x.id === editingTaskId) : null;
+  const ttSel = document.getElementById('f-task-type');
+  if (t && ttSel) {
+    const oldType = t.taskType;
+    t.taskType = ttSel.value;
+    if (t.taskType !== oldType) applyFixedTaskType(t, 'duration');
+  }
+  _origSaveTask();
+};
+
+// ── Patch migrateProject to include nonWorkingDays ──────────────
+const _origMigrateProject = migrateProject;
+migrateProject = function(p) {
+  _origMigrateProject(p);
+  migrateProjectNonWorking(p);
+  return p;
+};
+
+// ── Non-working-days aware workingDaysBetween (override) ─────────
+// Only applies when a project context is available
+const _origWorkingDaysBetween = workingDaysBetween;
+workingDaysBetween = function(s, e) {
+  const p = getProject();
+  if (!p || !(p.nonWorkingDays && p.nonWorkingDays.length) && !(p.workWeekend && (p.workWeekend.sat || p.workWeekend.sun))) {
+    return _origWorkingDaysBetween(s, e);
+  }
+  return workingDaysBetweenP(p, s, e);
+};
+
+
 // Warns in console if critical architecture is broken.
 // ═══════════════════════════════════════════════════════════════
 (function _integrityCheck(){
