@@ -6350,17 +6350,20 @@ migrateProject = function(p) {
 };
 
 // ── Non-working-days aware workingDaysBetween ────────────────────
-// Wraps the base calculation with project calendar awareness.
-// Uses workingDaysBetweenP when project has custom non-working days.
-// Safe: no function reassignment — original renamed to _workingDaysBetweenBase.
-const _origWorkingDaysBetween = workingDaysBetween;
-function workingDaysBetween(s, e) {
+// The base weekday-only calculation is inlined here.
+// When the project has custom non-working days, delegates to workingDaysBetweenP.
+// NOTE: this is an assignment, not a function declaration, to avoid JS hoisting
+// overwriting the original definition at L1547.
+const _origWorkingDaysBetween = workingDaysBetween;  // capture L1547 base fn
+const _wdbWrapper = function(s, e) {
   const p = getProject();
   if (!p || (!(p.nonWorkingDays && p.nonWorkingDays.length) && !(p.workWeekend && (p.workWeekend.sat || p.workWeekend.sun)))) {
     return _origWorkingDaysBetween(s, e);
   }
   return workingDaysBetweenP(p, s, e);
-}
+};
+// Reassign so all callers (autoScheduleCascade, computeEffort, etc.) pick up the wrapper
+workingDaysBetween = _wdbWrapper;
 
 
 // Warns in console if critical architecture is broken.
