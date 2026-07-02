@@ -57,7 +57,7 @@
 /* ── Priority colours ── */
 --pri-critical:#DC2626;--pri-high:#EA580C;
 /* ── Layout ── */
---row-h:38px;--header-h:60px;--axis-h:48px;--comment-lane-h:32px;--col-header-h:80px;
+--row-h:38px;--header-h:60px;--axis-h:44px;--comment-lane-h:0px;--col-header-h:44px;
 --sidebar-w:256px;
 /* ── Fonts ── */
 --font-display:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;
@@ -73,7 +73,7 @@ html,html{height:100%;}body{height:100%;overflow:hidden;}
 body{font-family:var(--font-body);font-size:13px;line-height:1.5;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;font-feature-settings:'kern' 1,'liga' 1;}
 .app{display:grid;grid-template-columns:var(--sidebar-w,260px) 1fr;height:100vh;transition:grid-template-columns .22s cubic-bezier(.4,0,.2,1);}
 /* SIDEBAR */
-.sidebar{background:var(--paper-tint);border-right:1px solid var(--border-soft);display:flex;flex-direction:column;overflow:hidden;}
+.sidebar{background:var(--paper-tint);border-right:1px solid var(--border-soft);display:flex;flex-direction:column;overflow:hidden;transition:width .22s cubic-bezier(.4,0,.2,1),min-width .22s cubic-bezier(.4,0,.2,1),opacity .18s ease;}
 .sidebar-header{height:var(--header-h);padding:14px 18px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border-soft);background:var(--card);}
 .brand{font-family:var(--font-display);font-weight:700;font-size:17px;letter-spacing:-.02em;display:flex;align-items:center;gap:5px;color:var(--ink);}
 .brand-mark{color:var(--accent);font-weight:800;}
@@ -102,7 +102,7 @@ button.btn-danger:hover{background:rgba(220,38,38,.08);border-color:#dc2626;}
 button.btn:disabled{opacity:.35;cursor:not-allowed;}
 button.btn:disabled:hover{background:var(--card);border-color:var(--border);}
 /* ── SIDEBAR TOGGLE ── */
-.sidebar{transition:width .22s cubic-bezier(.4,0,.2,1),min-width .22s cubic-bezier(.4,0,.2,1),opacity .18s ease;}
+/* sidebar transition merged into main rule above */
 .sidebar.collapsed{width:0!important;min-width:0!important;overflow:hidden;border-right:none;opacity:0;}
 .sidebar-toggle{position:relative;z-index:10;display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:6px;background:var(--card);border:1px solid var(--border);cursor:pointer;color:var(--ink-3);font-size:14px;transition:background .12s,color .12s;flex-shrink:0;}
 .sidebar-toggle:hover{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 0 12px rgba(3,105,161,.25);}
@@ -206,18 +206,18 @@ button.btn:disabled:hover{background:var(--card);border-color:var(--border);}
 
 .chart-pane{display:flex;flex-direction:column;overflow:hidden;background:var(--card);min-width:0;}
 .chart-header{overflow:hidden;flex-shrink:0;height:var(--col-header-h);background:var(--paper-tint);border-bottom:1px solid var(--border);position:relative;box-shadow:0 1px 3px rgba(15,23,42,.04);}
-.chart-body{overflow:auto;background:var(--card);flex:1;min-height:0;}
+.chart-body{overflow:auto;background:var(--card);flex:1;min-height:0;scrollbar-width:thin;scrollbar-color:var(--border-strong) var(--paper-tint);}
 
 #commentOverlay{position:absolute;bottom:0;left:0;right:0;height:var(--comment-lane-h);cursor:crosshair;overflow:visible;z-index:10;}
 #commentAddPin{position:absolute;top:0;pointer-events:none;display:none;}
 .cap-stem{position:absolute;left:0;top:4px;width:1.5px;height:22px;background:var(--accent);opacity:.6;}
 .cap-bubble{position:absolute;top:3px;left:-10px;width:20px;height:20px;background:var(--accent);color:#fff;border-radius:50%;font-size:12px;font-weight:700;text-align:center;line-height:20px;box-shadow:0 2px 8px rgba(79,70,229,.35);}
 
-.chart-bar{cursor:grab;}
+.chart-bar{cursor:grab;transition:filter .1s;}
 .chart-bar.dragging{cursor:grabbing;}
 .chart-bar.summary-bar{cursor:default;}
 .chart-bar-handle{cursor:ew-resize;}
-.chart-bar{cursor:grab;transition:filter .1s;}
+/* chart-bar transition merged */
 .chart-bar:hover{filter:brightness(.96) saturate(1.15);}
 .chart-bar.dragging{cursor:grabbing;opacity:.85;}
 .summary-bar{cursor:pointer;}
@@ -348,6 +348,28 @@ button.btn:disabled:hover{background:var(--card);border-color:var(--border);}
 .ci-text{font-size:13px;color:var(--ink-2);line-height:1.55;}
 .comment-add-section{padding:14px 22px 4px;}
 .comment-add-section .field+.field{margin-top:10px;}
+/* Task comment thread (modal) */
+.tc-comment-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border-soft);}
+.tc-comment-item:last-child{border-bottom:none;}
+.tc-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;margin-top:1px;}
+.tc-body{flex:1;min-width:0;}
+.tc-meta{display:flex;align-items:baseline;gap:8px;margin-bottom:4px;flex-wrap:wrap;}
+.tc-author{font-weight:700;font-size:12px;color:var(--ink);}
+.tc-time{font-size:10px;color:var(--ink-4);font-family:var(--font-mono);}
+.tc-type-badge{font-size:10px;padding:1px 7px;border-radius:10px;font-weight:600;}
+.tc-text{font-size:13px;line-height:1.6;color:var(--ink);word-break:break-word;}
+.tc-delete-btn{background:none;border:none;color:var(--ink-4);cursor:pointer;font-size:12px;padding:2px 4px;border-radius:3px;flex-shrink:0;opacity:.5;}
+.tc-delete-btn:hover{opacity:1;color:#dc2626;}
+/* Comment indicator in left task-row panel */
+.task-has-comment{position:relative;}
+.task-has-comment::before{content:'';position:absolute;left:0;top:4px;bottom:4px;width:3px;border-radius:0 2px 2px 0;background:#3B82F6;}
+.task-comment-dot{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:#3B82F6;color:#fff;font-size:9px;font-weight:700;margin-left:5px;vertical-align:middle;line-height:1;flex-shrink:0;}
+/* type badge colours */
+.tc-type-decision{background:#EEF2FF;color:#4338CA;}
+.tc-type-blocker{background:#FEF2F2;color:#DC2626;}
+.tc-type-update{background:#F0FDF4;color:#16A34A;}
+.tc-type-risk{background:#FFFBEB;color:#D97706;}
+.tc-type-general{background:var(--paper-tint);color:var(--ink-3);}
 
 .bar-tooltip{position:fixed;background:#0f1c2e;color:#e0f2fe;border:none;border-radius:5px;padding:10px 13px;font-size:12px;pointer-events:none;z-index:50;display:none;box-shadow:0 8px 24px rgba(15,23,42,.35);max-width:300px;}
 .bar-tooltip.show{display:block;}
@@ -360,7 +382,7 @@ button.btn:disabled:hover{background:var(--card);border-color:var(--border);}
 ::-webkit-scrollbar-thumb:hover{background:var(--accent);}
 .chart-body::-webkit-scrollbar{height:10px;}
 .chart-body::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:4px;}
-.chart-body{scrollbar-width:thin;scrollbar-color:var(--border-strong) var(--paper-tint);}
+/* chart-body scrollbar merged into main rule */
 
 .collab-badge{font-family:var(--font-mono);font-size:9px;font-weight:700;color:#7C3AED;background:rgba(124,58,237,.1);padding:2px 8px;border-radius:20px;display:none;align-items:center;}
 .histogram-panel{border-top:2px solid var(--border);background:var(--card);overflow:hidden;flex-shrink:0;transition:max-height .2s ease;}
@@ -663,14 +685,6 @@ button.btn:disabled:hover{background:var(--card);border-color:var(--border);}
 .scn-color-swatch:hover{transform:scale(1.2);}
 .scn-color-swatch.sel{border-color:var(--ink);}
 
-/* ── Task row drag-to-reorder ─────────────────────── */
-.drag-handle{width:14px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2.5px;cursor:grab;padding:0 2px;opacity:0;transition:opacity .15s;position:absolute;left:2px;top:0;bottom:0;z-index:2;}
-.drag-handle span{display:block;width:10px;height:1.5px;background:var(--ink-3);border-radius:1px;}
-.task-row:hover .drag-handle{opacity:1;}
-.task-row.drag-over-top{border-top:2px solid var(--accent) !important;}
-.task-row.drag-over-bottom{border-bottom:2px solid var(--accent) !important;}
-.task-row.row-dragging{opacity:.4;}
-
 /* ── Professional Scrollbars ── */
 ::-webkit-scrollbar{width:6px;height:6px;}
 ::-webkit-scrollbar-track{background:transparent;}
@@ -704,6 +718,106 @@ button.btn:disabled:hover{background:var(--card);border-color:var(--border);}
   .chart-body::-webkit-scrollbar { height: 10px !important; }
   .chart-body { scrollbar-width: thin !important; }
 
+
+/* ══════════════════════════════════════════════════════════
+   ROADMAP VIEW — merged from extension block
+   ══════════════════════════════════════════════════════════ */
+/* ── ROADMAP ─────────────────────────────────────────────────── */
+.rm-shell{display:flex;flex-direction:column;height:100%;background:var(--card);overflow:hidden;}
+.rm-header{padding:10px 16px;border-bottom:1px solid var(--border-soft);display:flex;align-items:center;justify-content:space-between;background:var(--paper-tint);flex-shrink:0;gap:10px;}
+.rm-label{font-family:var(--font-display);font-weight:800;font-size:15px;color:var(--ink);letter-spacing:-.02em;}
+.rm-subtitle{font-family:var(--font-mono);font-size:9px;color:var(--ink-4);text-transform:uppercase;letter-spacing:.08em;margin-left:8px;}
+.rm-controls{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.rm-filter-group{display:flex;background:var(--paper-tint);border:1px solid var(--border-soft);border-radius:6px;padding:2px;gap:1px;}
+.rm-filter-btn{background:transparent;border:none;padding:4px 9px;font:inherit;font-family:var(--font-mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;border-radius:4px;color:var(--ink-3);}
+.rm-filter-btn.active,.rm-filter-btn:hover{background:var(--accent);color:#fff;}
+/* Body: left pane + chart side by side, both scroll together */
+.rm-body{display:grid;grid-template-columns:220px 1fr;flex:1;overflow:hidden;min-height:0;}
+/* Left pane: no independent scroll — it's a pixel-perfect mirror of SVG rows */
+.rm-left-pane{border-right:1px solid var(--border-soft);overflow:hidden;background:var(--card);display:flex;flex-direction:column;}
+.rm-left-header{height:52px;background:var(--paper-tint);border-bottom:1px solid var(--border-soft);display:flex;align-items:flex-end;padding:0 14px 8px;font-family:var(--font-mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-4);flex-shrink:0;}
+.rm-left-scroll{flex:1;overflow-y:hidden;position:relative;}
+.rm-left-inner{position:absolute;top:0;left:0;right:0;}
+.rm-chart-area{display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+.rm-chart-header{height:52px;background:var(--paper-tint);border-bottom:1px solid var(--border-soft);overflow:hidden;flex-shrink:0;position:relative;}
+.rm-chart-header svg{position:absolute;top:0;left:0;}
+.rm-chart-scroll{flex:1;overflow:auto;background:var(--card);position:relative;}
+.rm-chart-scroll svg{display:block;}
+.rm-legend{border-top:1px solid var(--border-soft);padding:6px 16px;display:flex;gap:12px;align-items:center;background:var(--paper-tint);flex-shrink:0;flex-wrap:wrap;min-height:34px;}
+.rm-legend-item{display:flex;align-items:center;gap:5px;font-family:var(--font-mono);font-size:10px;color:var(--ink-3);font-weight:600;}
+.rm-legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+/* Left pane rows — FIXED heights matching SVG row heights exactly */
+.rm-proj-header{height:36px;box-sizing:border-box;padding:0 12px 0 10px;background:rgba(3,105,161,.04);border-bottom:1px solid var(--border-soft);display:flex;align-items:center;gap:7px;cursor:pointer;user-select:none;border-left:3px solid transparent;flex-shrink:0;}
+.rm-proj-header:hover{background:rgba(3,105,161,.09);}
+.rm-proj-name{font-family:var(--font-display);font-weight:700;font-size:12px;color:var(--ink);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rm-proj-badge{font-family:var(--font-mono);font-size:9px;padding:1px 6px;border-radius:9px;font-weight:700;flex-shrink:0;}
+.rm-task-row{height:32px;box-sizing:border-box;padding:0 12px 0 22px;display:flex;align-items:center;gap:7px;border-bottom:1px solid var(--border-soft);cursor:pointer;flex-shrink:0;}
+.rm-task-row:hover{background:var(--hover);}
+.rm-spacer-row{flex-shrink:0;}
+.rm-task-name{font-size:11px;color:var(--ink);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:var(--font-display);}
+.rm-task-name.milestone{color:var(--accent);font-style:italic;font-weight:600;}
+.rm-task-meta{font-family:var(--font-mono);font-size:9px;color:var(--ink-4);flex-shrink:0;white-space:nowrap;}
+/* ── DASHBOARD ────────────────────────────────────────────────── */
+.dash-shell{display:flex;flex-direction:column;height:100%;background:var(--paper);overflow:hidden;}
+.dash-header{padding:14px 22px;border-bottom:1px solid var(--border-soft);background:var(--card);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.dash-title{font-family:var(--font-display);font-weight:800;font-size:17px;color:var(--ink);letter-spacing:-.02em;}
+.dash-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:16px 20px;overflow-y:auto;flex:1;}
+.dash-bottom{padding:0 20px 16px;display:grid;grid-template-columns:1fr 1fr;gap:14px;flex-shrink:0;}
+.dash-card{background:var(--card);border:1px solid var(--border-soft);border-radius:10px;padding:16px 18px;position:relative;overflow:hidden;}
+.dash-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--dash-accent,var(--accent));}
+.dash-kpi-num{font-family:var(--font-mono);font-size:32px;font-weight:800;line-height:1;color:var(--ink);letter-spacing:-.04em;}
+.dash-kpi-lbl{font-family:var(--font-mono);font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-4);font-weight:700;margin-top:5px;}
+.dash-kpi-sub{font-size:11px;color:var(--ink-3);margin-top:4px;}
+.dash-kpi-trend{font-family:var(--font-mono);font-size:10px;font-weight:700;margin-top:6px;display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:10px;}
+.trend-up{background:rgba(22,163,74,.1);color:#16a34a;}
+.trend-down{background:rgba(220,38,38,.1);color:#dc2626;}
+.trend-flat{background:rgba(100,116,139,.1);color:#64748b;}
+.dash-chart-card{background:var(--card);border:1px solid var(--border-soft);border-radius:10px;padding:16px 18px;}
+.dash-chart-title{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-3);font-weight:700;margin-bottom:12px;}
+.dash-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.dash-bar-label{font-size:11px;color:var(--ink-2);width:80px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.dash-bar-track{flex:1;height:10px;background:var(--border-soft);border-radius:5px;overflow:hidden;}
+.dash-bar-fill{height:100%;border-radius:5px;transition:width .4s ease;}
+.dash-bar-val{font-family:var(--font-mono);font-size:10px;color:var(--ink-3);width:38px;text-align:right;flex-shrink:0;}
+.dash-heatmap-cell{border-radius:3px;cursor:pointer;transition:opacity .1s;}
+.dash-heatmap-cell:hover{opacity:.75;}
+.dash-status-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border-soft);}
+.dash-status-row:last-child{border-bottom:none;}
+.dash-status-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.dash-proj-name{font-size:12px;font-weight:600;color:var(--ink);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.dash-proj-pct{font-family:var(--font-mono);font-size:11px;color:var(--ink-3);}
+/* ── MILESTONE PICKER in task modal ────────────────────────────── */
+.ms-date-row{display:flex;align-items:center;gap:8px;background:rgba(3,105,161,.05);border:1px solid rgba(3,105,161,.2);border-radius:6px;padding:8px 12px;margin-top:8px;}
+.ms-diamond{font-size:16px;color:var(--accent);}
+.ms-label{font-size:12px;font-weight:600;color:var(--ink-2);flex:1;}
+/* ── CROSS-PROJECT DEPS ─────────────────────────────────────────── */
+.xdep-row{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--paper-tint);border-radius:6px;margin-bottom:5px;border:1px solid var(--border-soft);}
+.xdep-from{font-family:var(--font-mono);font-size:10px;color:#0052cc;font-weight:700;}
+.xdep-arrow{color:var(--ink-4);font-size:12px;}
+.xdep-to{font-size:12px;color:var(--ink);flex:1;}
+.xdep-status{font-family:var(--font-mono);font-size:9px;padding:2px 7px;border-radius:10px;font-weight:700;}
+/* ── REPORT ENHANCEMENTS ─────────────────────────────────────────── */
+.rep-milestone-row{display:flex;align-items:center;gap:10px;padding:9px 12px;border-bottom:1px solid var(--border-soft);cursor:pointer;}
+.rep-milestone-row:hover{background:var(--hover);}
+.rep-milestone-diamond{font-size:14px;flex-shrink:0;}
+.rep-ms-proj{font-family:var(--font-mono);font-size:9px;color:var(--ink-4);font-weight:700;}
+.rep-ms-name{font-size:13px;font-weight:600;color:var(--ink);flex:1;}
+.rep-ms-date{font-family:var(--font-mono);font-size:11px;color:var(--ink-3);}
+.rep-health-score{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:14px;font-weight:800;flex-shrink:0;border:2.5px solid;}
+.portfolio-row{padding:12px 14px;border-bottom:1px solid var(--border-soft);display:flex;align-items:center;gap:12px;cursor:pointer;}
+.portfolio-row:hover{background:var(--hover);}
+.portfolio-proj-name{font-family:var(--font-display);font-weight:700;font-size:13px;flex:1;}
+.portfolio-bar-wrap{width:120px;height:8px;background:var(--border-soft);border-radius:4px;overflow:hidden;}
+.portfolio-bar{height:100%;border-radius:4px;}
+.dep-health-item{padding:10px 14px;border-bottom:1px solid var(--border-soft);}
+.dep-health-tag{font-family:var(--font-mono);font-size:9px;font-weight:700;padding:1px 7px;border-radius:10px;margin-right:6px;}
+.dep-ok{background:rgba(22,163,74,.1);color:#16a34a;border:1px solid rgba(22,163,74,.3);}
+.dep-warn{background:rgba(217,119,6,.1);color:#d97706;border:1px solid rgba(217,119,6,.3);}
+.dep-err{background:rgba(220,38,38,.1);color:#dc2626;border:1px solid rgba(220,38,38,.3);}
+
+/* ── Sync badge (fixed position) ── */
+#_syncBadge{position:fixed;bottom:14px;left:14px;z-index:9999;background:var(--card,#fff);border:1px solid var(--border,#ddd);border-radius:20px;padding:5px 12px;font-size:10px;font-weight:700;display:flex;align-items:center;gap:7px;box-shadow:0 2px 8px rgba(0,0,0,.12);cursor:pointer;font-family:monospace;color:var(--ink,#111);}
+#_syncDot{width:8px;height:8px;border-radius:50%;background:#6b7280;flex-shrink:0;transition:background .3s;}
   </style>
 </head>
 <body>
@@ -756,6 +870,7 @@ button.btn:disabled:hover{background:var(--card);border-color:var(--border);}
         <button class="btn" id="undoBtn" disabled title="Undo" style="font-family:var(--font-mono);font-size:12px;padding:8px 10px;min-width:44px;text-align:center">↩</button>
         <button class="btn" id="redoBtn" disabled title="Redo" style="font-family:var(--font-mono);font-size:12px;padding:8px 10px;min-width:44px;text-align:center">↪</button>
         <button class="btn btn-primary" id="addTaskBtn">+ Task</button>
+        <button class="btn" id="addCommentBtn" title="Add a timeline note for today's date" onclick="openCommentModal(isoFromDate(todayMid()))" style="font-size:12px">💬 Note</button>
         <div style="position:relative;flex-shrink:0;" id="themeWrap">
   <button class="theme-btn" id="themeBtn" onclick="toggleThemePanel(event)">
     <span class="theme-dot" id="themeDot" style="background:#2563EB"></span>
@@ -984,7 +1099,6 @@ button.btn:disabled:hover{background:var(--card);border-color:var(--border);}
           <div class="task-pane">
             <div class="task-pane-header">
               <div class="tph-cols" id="tphCols"><div><span style="text-align:center;width:100%;display:block;">WBS</span><span class="col-resizer" data-col="wbs"></span></div><div>Task / Owner<span class="col-resizer" data-col="task"></span></div><div>Owner<span class="col-resizer" data-col="owner"></span></div></div>
-              <div class="tph-notes"><span class="tph-notes-icon">💬</span><span>Timeline notes</span><span class="tph-notes-count" id="tphCount">0</span><span class="tph-notes-hint">click on timeline to add →</span></div>
             </div>
             <div class="task-rows" id="taskRows"></div>
           </div>
@@ -992,7 +1106,6 @@ button.btn:disabled:hover{background:var(--card);border-color:var(--border);}
           <div class="chart-pane">
             <div class="chart-header" id="chartHeader">
               <svg id="chartHeaderSvg"></svg>
-              <div id="commentOverlay"><div id="commentAddPin"><div class="cap-stem"></div><div class="cap-bubble" id="capBubble">+</div></div></div>
             </div>
             <div class="chart-body" id="chartBody"><svg id="chartBodySvg"></svg></div>
             <div class="histogram-panel closed" id="histogramPanel"><div class="histogram-header" onclick="toggleHistogram()"><span id="histogramArrow">▶</span><span style="margin-left:6px">Resource Histogram</span></div><div class="histogram-body" id="histogramBody"></div></div>
@@ -1278,7 +1391,7 @@ function _setSyncBadge(status) {
 }
 // ══════════════════════════════════════════════════════════════
 
-const AXIS_H=44,COMMENTS_H=34,HEADER_H=AXIS_H+COMMENTS_H,ROW_H=36;
+const AXIS_H=44,COMMENTS_H=0,HEADER_H=AXIS_H+COMMENTS_H,ROW_H=36;
 const SVG_NS='http://www.w3.org/2000/svg';
 const COMMENT_COLORS=['#3B82F6','#10B981','#F59E0B','#8B5CF6','#EC4899','#0EA5E9','#84CC16','#F97316'];
 const RESOURCE_COLORS=['#3B82F6','#10B981','#F59E0B','#8B5CF6','#EC4899','#0EA5E9','#84CC16','#F97316','#EF4444','#14B8A6'];
@@ -1315,6 +1428,12 @@ const todayMid=()=>{const d=new Date();d.setHours(0,0,0,0);return d;};
 const getDayPx=()=>({day:34,week:15,month:5}[state.zoom]);
 
 // ====== MIGRATION ======
+// ══════════════════════════════════════════════════════════════
+// MODULE: DATA MIGRATION
+// migrateTask, migrateProject, migrateProjectNonWorking
+// Always use ?? defaults — never break existing data
+// Stable API — see Feature Lock checks M01–M03
+// ══════════════════════════════════════════════════════════════
 function migrateTask(t){
   t.priority=t.priority??'medium';t.isMilestone=t.isMilestone??false;
   t.baselineStart=t.baselineStart??null;t.baselineEnd=t.baselineEnd??null;
@@ -1486,6 +1605,14 @@ function calcCriticalPath(tasks){
 }
 
 // ====== STORAGE ======
+// Shared seed data — used as fallback when no cloud/local data exists
+const _SEED_FALLBACK_DATA = "{\"projects\": [{\"id\": \"proj_g2injpn\", \"name\": \"AID - Overboost\", \"tasks\": [{\"id\": \"task_wz9w7o1\", \"name\": \"Scoping the Algo\", \"owner\": \"waquar\", \"status\": \"todo\", \"priority\": \"medium\", \"start\": \"2026-06-01\", \"end\": \"2026-06-07\", \"progress\": 0, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": null, \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}], \"comments\": [], \"resources\": [], \"customFields\": [], \"macros\": [], \"baselines\": [], \"crossDeps\": [], \"leaveCalendar\": {}}, {\"id\": \"proj_p92ei5j\", \"name\": \"Real time voltage Drop\", \"tasks\": [{\"id\": \"task_ulwffn1\", \"name\": \"Algo Changes\", \"owner\": \"Akshay Bhivagade\", \"status\": \"done\", \"priority\": \"high\", \"start\": \"2026-05-27\", \"end\": \"2026-06-01\", \"progress\": 100, \"deps\": [], \"notes\": \"1. Low bypass filter for both EBV, IBV to be configurable\\n2. Add DC check\\n3. Time-based: at least 5 minutes\\n4. Check is_obd\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-01\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_ztx57sg\", \"name\": \"Combiner Changes\", \"owner\": \"Ayush Mandhana\", \"status\": \"progress\", \"priority\": \"high\", \"start\": \"2026-06-01\", \"end\": \"2026-06-05\", \"progress\": 95, \"deps\": [], \"notes\": \"1. Works tag and without tag\\n2. No bat alert = no run\\n3. Add RVD OBD check\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-05\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_owqovse\", \"name\": \"UX Changes\", \"owner\": \"Anjali Pandey\", \"status\": \"todo\", \"priority\": \"high\", \"start\": \"2026-06-04\", \"end\": \"2026-06-10\", \"progress\": 0, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": null, \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_824ol1a\", \"name\": \"New UI Changes\", \"owner\": \"Anjali Pandey\", \"status\": \"risk\", \"priority\": \"high\", \"start\": \"2026-06-15\", \"end\": \"2026-06-17\", \"progress\": 0, \"deps\": [{\"taskId\": \"task_owqovse\", \"type\": \"FS\"}], \"notes\": \"\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": null, \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_snqfv2c\", \"name\": \"Final Release\", \"owner\": \"\", \"status\": \"progress\", \"priority\": \"medium\", \"start\": \"2026-06-18\", \"end\": \"2026-06-24\", \"progress\": 0, \"deps\": [{\"taskId\": \"task_824ol1a\", \"type\": \"FS\"}], \"notes\": \"\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-24\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_ixbcpat\", \"name\": \"Documentation\", \"owner\": \"Anjali Pandey\", \"status\": \"todo\", \"priority\": \"high\", \"start\": \"2026-06-04\", \"end\": \"2026-06-10\", \"progress\": 0, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"parentId\": \"task_owqovse\", \"assignedResources\": [{\"resourceId\": \"res_kwbk9xr\", \"allocation\": 100}], \"workHours\": null, \"customFieldValues\": {}, \"baselineStart\": null, \"baselineEnd\": null, \"isCollapsed\": false, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-12\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}], \"comments\": [], \"resources\": [{\"id\": \"res_pheg23k\", \"name\": \"Ayush Mandhana\", \"hoursPerDay\": 8, \"costPerHour\": 0, \"color\": \"#0369a1\", \"hrsPerDay\": 8, \"costPerHr\": 0, \"availableFrom\": null, \"availableTo\": null}, {\"id\": \"res_kwbk9xr\", \"name\": \"Anjali Pandey\", \"hoursPerDay\": 8, \"costPerHour\": 0, \"color\": \"#059669\", \"hrsPerDay\": 8, \"costPerHr\": 0, \"availableFrom\": null, \"availableTo\": null}, {\"id\": \"res_mjmvmzc\", \"name\": \"Akshay Bhivagade\", \"hoursPerDay\": 8, \"costPerHour\": 0, \"color\": \"#ea580c\", \"hrsPerDay\": 8, \"costPerHr\": 0, \"availableFrom\": null, \"availableTo\": null}], \"customFields\": [], \"macros\": [], \"baselines\": [], \"crossDeps\": [], \"leaveCalendar\": {}}, {\"id\": \"proj_1xk7dl8\", \"name\": \"CARB\", \"tasks\": [{\"id\": \"task_8xlqr44\", \"name\": \"Revisit Documentation & build Test Cases\", \"owner\": \"\", \"status\": \"progress\", \"priority\": \"medium\", \"start\": \"2026-05-26\", \"end\": \"2026-06-04\", \"progress\": 65, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"parentId\": null, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"baselineStart\": null, \"baselineEnd\": null, \"isCollapsed\": false, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-05\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_v67tt4d\", \"name\": \"CSV & XML New format\", \"owner\": \"\", \"status\": \"progress\", \"priority\": \"medium\", \"start\": \"2026-05-25\", \"end\": \"2026-06-05\", \"progress\": 55, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"parentId\": null, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"baselineStart\": null, \"baselineEnd\": null, \"isCollapsed\": false, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-04\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_ar5kmti\", \"name\": \"Preparation for Application Document\", \"owner\": \"\", \"status\": \"done\", \"priority\": \"medium\", \"start\": \"2026-05-25\", \"end\": \"2026-06-19\", \"progress\": 100, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"parentId\": null, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"baselineStart\": null, \"baselineEnd\": null, \"isCollapsed\": false, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-30\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_0h2y9f2\", \"name\": \"Submit Application\", \"owner\": \"\", \"status\": \"todo\", \"priority\": \"critical\", \"start\": \"2026-05-26\", \"end\": \"2026-06-30\", \"progress\": 0, \"deps\": [{\"taskId\": \"task_ar5kmti\", \"type\": \"FS\"}], \"notes\": \"\", \"isMilestone\": false, \"parentId\": null, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"baselineStart\": null, \"baselineEnd\": null, \"isCollapsed\": false, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-30\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}], \"comments\": [], \"resources\": [], \"customFields\": [], \"macros\": [], \"baselines\": [], \"crossDeps\": [], \"leaveCalendar\": {}}], \"activeId\": \"proj_p92ei5j\", \"activeView\": \"gantt\", \"zoom\": \"day\", \"sortBy\": \"end\", \"showBaseline\": true, \"showCritical\": true, \"showExpected\": true, \"calMonth\": \"2026-06\", \"globalResources\": [], \"showHistogram\": false, \"autoSchedule\": false, \"activeBaselineIdx\": 0}";
+
+// ══════════════════════════════════════════════════════════════
+// MODULE: STATE MANAGEMENT
+// loadState, saveState, pushUndo, getProject, renderAll
+// Stable API — see Feature Lock checks ST1–ST4
+// ══════════════════════════════════════════════════════════════
 async function loadState(){
   const ind=document.getElementById('saveStatus');
   if(ind)ind.textContent='loading…';
@@ -1536,8 +1663,8 @@ async function loadState(){
     const res=await fetch('/api/state').catch(()=>({status:500,ok:false,json:async()=>({})}));
     // 404 = server up but no data yet → treat as fresh start, not error
     if(res.status===404){if(!state.projects.length){
-    const _s="{\"projects\": [{\"id\": \"proj_g2injpn\", \"name\": \"AID - Overboost\", \"tasks\": [{\"id\": \"task_wz9w7o1\", \"name\": \"Scoping the Algo\", \"owner\": \"waquar\", \"status\": \"todo\", \"priority\": \"medium\", \"start\": \"2026-06-01\", \"end\": \"2026-06-07\", \"progress\": 0, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": null, \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}], \"comments\": [], \"resources\": [], \"customFields\": [], \"macros\": [], \"baselines\": [], \"crossDeps\": [], \"leaveCalendar\": {}}, {\"id\": \"proj_p92ei5j\", \"name\": \"Real time voltage Drop\", \"tasks\": [{\"id\": \"task_ulwffn1\", \"name\": \"Algo Changes\", \"owner\": \"Akshay Bhivagade\", \"status\": \"done\", \"priority\": \"high\", \"start\": \"2026-05-27\", \"end\": \"2026-06-01\", \"progress\": 100, \"deps\": [], \"notes\": \"1. Low bypass filter for both EBV, IBV to be configurable\\n2. Add DC check\\n3. Time-based: at least 5 minutes\\n4. Check is_obd\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-01\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_ztx57sg\", \"name\": \"Combiner Changes\", \"owner\": \"Ayush Mandhana\", \"status\": \"progress\", \"priority\": \"high\", \"start\": \"2026-06-01\", \"end\": \"2026-06-05\", \"progress\": 95, \"deps\": [], \"notes\": \"1. Works tag and without tag\\n2. No bat alert = no run\\n3. Add RVD OBD check\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-05\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_owqovse\", \"name\": \"UX Changes\", \"owner\": \"Anjali Pandey\", \"status\": \"todo\", \"priority\": \"high\", \"start\": \"2026-06-04\", \"end\": \"2026-06-10\", \"progress\": 0, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": null, \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_824ol1a\", \"name\": \"New UI Changes\", \"owner\": \"Anjali Pandey\", \"status\": \"risk\", \"priority\": \"high\", \"start\": \"2026-06-15\", \"end\": \"2026-06-17\", \"progress\": 0, \"deps\": [{\"taskId\": \"task_owqovse\", \"type\": \"FS\"}], \"notes\": \"\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": null, \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_snqfv2c\", \"name\": \"Final Release\", \"owner\": \"\", \"status\": \"progress\", \"priority\": \"medium\", \"start\": \"2026-06-18\", \"end\": \"2026-06-24\", \"progress\": 0, \"deps\": [{\"taskId\": \"task_824ol1a\", \"type\": \"FS\"}], \"notes\": \"\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-24\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_ixbcpat\", \"name\": \"Documentation\", \"owner\": \"Anjali Pandey\", \"status\": \"todo\", \"priority\": \"high\", \"start\": \"2026-06-04\", \"end\": \"2026-06-10\", \"progress\": 0, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"parentId\": \"task_owqovse\", \"assignedResources\": [{\"resourceId\": \"res_kwbk9xr\", \"allocation\": 100}], \"workHours\": null, \"customFieldValues\": {}, \"baselineStart\": null, \"baselineEnd\": null, \"isCollapsed\": false, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-12\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}], \"comments\": [], \"resources\": [{\"id\": \"res_pheg23k\", \"name\": \"Ayush Mandhana\", \"hoursPerDay\": 8, \"costPerHour\": 0, \"color\": \"#0369a1\", \"hrsPerDay\": 8, \"costPerHr\": 0, \"availableFrom\": null, \"availableTo\": null}, {\"id\": \"res_kwbk9xr\", \"name\": \"Anjali Pandey\", \"hoursPerDay\": 8, \"costPerHour\": 0, \"color\": \"#059669\", \"hrsPerDay\": 8, \"costPerHr\": 0, \"availableFrom\": null, \"availableTo\": null}, {\"id\": \"res_mjmvmzc\", \"name\": \"Akshay Bhivagade\", \"hoursPerDay\": 8, \"costPerHour\": 0, \"color\": \"#ea580c\", \"hrsPerDay\": 8, \"costPerHr\": 0, \"availableFrom\": null, \"availableTo\": null}], \"customFields\": [], \"macros\": [], \"baselines\": [], \"crossDeps\": [], \"leaveCalendar\": {}}, {\"id\": \"proj_1xk7dl8\", \"name\": \"CARB\", \"tasks\": [{\"id\": \"task_8xlqr44\", \"name\": \"Revisit Documentation & build Test Cases\", \"owner\": \"\", \"status\": \"progress\", \"priority\": \"medium\", \"start\": \"2026-05-26\", \"end\": \"2026-06-04\", \"progress\": 65, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"parentId\": null, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"baselineStart\": null, \"baselineEnd\": null, \"isCollapsed\": false, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-05\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_v67tt4d\", \"name\": \"CSV & XML New format\", \"owner\": \"\", \"status\": \"progress\", \"priority\": \"medium\", \"start\": \"2026-05-25\", \"end\": \"2026-06-05\", \"progress\": 55, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"parentId\": null, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"baselineStart\": null, \"baselineEnd\": null, \"isCollapsed\": false, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-04\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_ar5kmti\", \"name\": \"Preparation for Application Document\", \"owner\": \"\", \"status\": \"done\", \"priority\": \"medium\", \"start\": \"2026-05-25\", \"end\": \"2026-06-19\", \"progress\": 100, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"parentId\": null, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"baselineStart\": null, \"baselineEnd\": null, \"isCollapsed\": false, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-30\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_0h2y9f2\", \"name\": \"Submit Application\", \"owner\": \"\", \"status\": \"todo\", \"priority\": \"critical\", \"start\": \"2026-05-26\", \"end\": \"2026-06-30\", \"progress\": 0, \"deps\": [{\"taskId\": \"task_ar5kmti\", \"type\": \"FS\"}], \"notes\": \"\", \"isMilestone\": false, \"parentId\": null, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"baselineStart\": null, \"baselineEnd\": null, \"isCollapsed\": false, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-30\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}], \"comments\": [], \"resources\": [], \"customFields\": [], \"macros\": [], \"baselines\": [], \"crossDeps\": [], \"leaveCalendar\": {}}], \"activeId\": \"proj_p92ei5j\", \"activeView\": \"gantt\", \"zoom\": \"day\", \"sortBy\": \"end\", \"showBaseline\": true, \"showCritical\": true, \"showExpected\": true, \"calMonth\": \"2026-06\", \"globalResources\": [], \"showHistogram\": false, \"autoSchedule\": false, \"activeBaselineIdx\": 0}";
-    const _p=JSON.parse(_s);
+    // [seed data extracted to _SEED_FALLBACK_DATA constant above]
+    const _p=JSON.parse(_SEED_FALLBACK_DATA);
     state.projects=_p.projects.map(p=>{migrateProject(p);return p;});
     state.globalResources=_p.globalResources||[];
     state.activeId=_p.activeId||(state.projects[0]?.id||null);
@@ -1578,8 +1705,8 @@ async function loadState(){
         if(raw){const p=JSON.parse(raw);if(p.projects&&Array.isArray(p.projects)){state.projects=p.projects;state.projects.forEach(migrateProject);state.activeId=p.activeId||null;}}
       }catch(ex){}
       if(!state.projects.length){
-    const _s="{\"projects\": [{\"id\": \"proj_g2injpn\", \"name\": \"AID - Overboost\", \"tasks\": [{\"id\": \"task_wz9w7o1\", \"name\": \"Scoping the Algo\", \"owner\": \"waquar\", \"status\": \"todo\", \"priority\": \"medium\", \"start\": \"2026-06-01\", \"end\": \"2026-06-07\", \"progress\": 0, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": null, \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}], \"comments\": [], \"resources\": [], \"customFields\": [], \"macros\": [], \"baselines\": [], \"crossDeps\": [], \"leaveCalendar\": {}}, {\"id\": \"proj_p92ei5j\", \"name\": \"Real time voltage Drop\", \"tasks\": [{\"id\": \"task_ulwffn1\", \"name\": \"Algo Changes\", \"owner\": \"Akshay Bhivagade\", \"status\": \"done\", \"priority\": \"high\", \"start\": \"2026-05-27\", \"end\": \"2026-06-01\", \"progress\": 100, \"deps\": [], \"notes\": \"1. Low bypass filter for both EBV, IBV to be configurable\\n2. Add DC check\\n3. Time-based: at least 5 minutes\\n4. Check is_obd\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-01\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_ztx57sg\", \"name\": \"Combiner Changes\", \"owner\": \"Ayush Mandhana\", \"status\": \"progress\", \"priority\": \"high\", \"start\": \"2026-06-01\", \"end\": \"2026-06-05\", \"progress\": 95, \"deps\": [], \"notes\": \"1. Works tag and without tag\\n2. No bat alert = no run\\n3. Add RVD OBD check\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-05\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_owqovse\", \"name\": \"UX Changes\", \"owner\": \"Anjali Pandey\", \"status\": \"todo\", \"priority\": \"high\", \"start\": \"2026-06-04\", \"end\": \"2026-06-10\", \"progress\": 0, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": null, \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_824ol1a\", \"name\": \"New UI Changes\", \"owner\": \"Anjali Pandey\", \"status\": \"risk\", \"priority\": \"high\", \"start\": \"2026-06-15\", \"end\": \"2026-06-17\", \"progress\": 0, \"deps\": [{\"taskId\": \"task_owqovse\", \"type\": \"FS\"}], \"notes\": \"\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": null, \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_snqfv2c\", \"name\": \"Final Release\", \"owner\": \"\", \"status\": \"progress\", \"priority\": \"medium\", \"start\": \"2026-06-18\", \"end\": \"2026-06-24\", \"progress\": 0, \"deps\": [{\"taskId\": \"task_824ol1a\", \"type\": \"FS\"}], \"notes\": \"\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-24\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_ixbcpat\", \"name\": \"Documentation\", \"owner\": \"Anjali Pandey\", \"status\": \"todo\", \"priority\": \"high\", \"start\": \"2026-06-04\", \"end\": \"2026-06-10\", \"progress\": 0, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"parentId\": \"task_owqovse\", \"assignedResources\": [{\"resourceId\": \"res_kwbk9xr\", \"allocation\": 100}], \"workHours\": null, \"customFieldValues\": {}, \"baselineStart\": null, \"baselineEnd\": null, \"isCollapsed\": false, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-12\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}], \"comments\": [], \"resources\": [{\"id\": \"res_pheg23k\", \"name\": \"Ayush Mandhana\", \"hoursPerDay\": 8, \"costPerHour\": 0, \"color\": \"#0369a1\", \"hrsPerDay\": 8, \"costPerHr\": 0, \"availableFrom\": null, \"availableTo\": null}, {\"id\": \"res_kwbk9xr\", \"name\": \"Anjali Pandey\", \"hoursPerDay\": 8, \"costPerHour\": 0, \"color\": \"#059669\", \"hrsPerDay\": 8, \"costPerHr\": 0, \"availableFrom\": null, \"availableTo\": null}, {\"id\": \"res_mjmvmzc\", \"name\": \"Akshay Bhivagade\", \"hoursPerDay\": 8, \"costPerHour\": 0, \"color\": \"#ea580c\", \"hrsPerDay\": 8, \"costPerHr\": 0, \"availableFrom\": null, \"availableTo\": null}], \"customFields\": [], \"macros\": [], \"baselines\": [], \"crossDeps\": [], \"leaveCalendar\": {}}, {\"id\": \"proj_1xk7dl8\", \"name\": \"CARB\", \"tasks\": [{\"id\": \"task_8xlqr44\", \"name\": \"Revisit Documentation & build Test Cases\", \"owner\": \"\", \"status\": \"progress\", \"priority\": \"medium\", \"start\": \"2026-05-26\", \"end\": \"2026-06-04\", \"progress\": 65, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"parentId\": null, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"baselineStart\": null, \"baselineEnd\": null, \"isCollapsed\": false, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-05\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_v67tt4d\", \"name\": \"CSV & XML New format\", \"owner\": \"\", \"status\": \"progress\", \"priority\": \"medium\", \"start\": \"2026-05-25\", \"end\": \"2026-06-05\", \"progress\": 55, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"parentId\": null, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"baselineStart\": null, \"baselineEnd\": null, \"isCollapsed\": false, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-04\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_ar5kmti\", \"name\": \"Preparation for Application Document\", \"owner\": \"\", \"status\": \"done\", \"priority\": \"medium\", \"start\": \"2026-05-25\", \"end\": \"2026-06-19\", \"progress\": 100, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"parentId\": null, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"baselineStart\": null, \"baselineEnd\": null, \"isCollapsed\": false, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-30\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_0h2y9f2\", \"name\": \"Submit Application\", \"owner\": \"\", \"status\": \"todo\", \"priority\": \"critical\", \"start\": \"2026-05-26\", \"end\": \"2026-06-30\", \"progress\": 0, \"deps\": [{\"taskId\": \"task_ar5kmti\", \"type\": \"FS\"}], \"notes\": \"\", \"isMilestone\": false, \"parentId\": null, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"baselineStart\": null, \"baselineEnd\": null, \"isCollapsed\": false, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-30\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}], \"comments\": [], \"resources\": [], \"customFields\": [], \"macros\": [], \"baselines\": [], \"crossDeps\": [], \"leaveCalendar\": {}}], \"activeId\": \"proj_p92ei5j\", \"activeView\": \"gantt\", \"zoom\": \"day\", \"sortBy\": \"end\", \"showBaseline\": true, \"showCritical\": true, \"showExpected\": true, \"calMonth\": \"2026-06\", \"globalResources\": [], \"showHistogram\": false, \"autoSchedule\": false, \"activeBaselineIdx\": 0}";
-    const _p=JSON.parse(_s);
+    // [seed data extracted to _SEED_FALLBACK_DATA constant above]
+    const _p=JSON.parse(_SEED_FALLBACK_DATA);
     state.projects=_p.projects.map(p=>{migrateProject(p);return p;});
     state.globalResources=_p.globalResources||[];
     state.activeId=_p.activeId||(state.projects[0]?.id||null);
@@ -1597,8 +1724,8 @@ async function loadState(){
     // Fallback to localStorage
     try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const p=JSON.parse(raw);if(p.projects&&Array.isArray(p.projects)&&p.projects.length){state.projects=p.projects;state.projects.forEach(migrateProject);state.globalResources=state.globalResources||[];}}}catch(ex){}
     if(!state.projects.length){
-    const _s="{\"projects\": [{\"id\": \"proj_g2injpn\", \"name\": \"AID - Overboost\", \"tasks\": [{\"id\": \"task_wz9w7o1\", \"name\": \"Scoping the Algo\", \"owner\": \"waquar\", \"status\": \"todo\", \"priority\": \"medium\", \"start\": \"2026-06-01\", \"end\": \"2026-06-07\", \"progress\": 0, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": null, \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}], \"comments\": [], \"resources\": [], \"customFields\": [], \"macros\": [], \"baselines\": [], \"crossDeps\": [], \"leaveCalendar\": {}}, {\"id\": \"proj_p92ei5j\", \"name\": \"Real time voltage Drop\", \"tasks\": [{\"id\": \"task_ulwffn1\", \"name\": \"Algo Changes\", \"owner\": \"Akshay Bhivagade\", \"status\": \"done\", \"priority\": \"high\", \"start\": \"2026-05-27\", \"end\": \"2026-06-01\", \"progress\": 100, \"deps\": [], \"notes\": \"1. Low bypass filter for both EBV, IBV to be configurable\\n2. Add DC check\\n3. Time-based: at least 5 minutes\\n4. Check is_obd\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-01\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_ztx57sg\", \"name\": \"Combiner Changes\", \"owner\": \"Ayush Mandhana\", \"status\": \"progress\", \"priority\": \"high\", \"start\": \"2026-06-01\", \"end\": \"2026-06-05\", \"progress\": 95, \"deps\": [], \"notes\": \"1. Works tag and without tag\\n2. No bat alert = no run\\n3. Add RVD OBD check\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-05\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_owqovse\", \"name\": \"UX Changes\", \"owner\": \"Anjali Pandey\", \"status\": \"todo\", \"priority\": \"high\", \"start\": \"2026-06-04\", \"end\": \"2026-06-10\", \"progress\": 0, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": null, \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_824ol1a\", \"name\": \"New UI Changes\", \"owner\": \"Anjali Pandey\", \"status\": \"risk\", \"priority\": \"high\", \"start\": \"2026-06-15\", \"end\": \"2026-06-17\", \"progress\": 0, \"deps\": [{\"taskId\": \"task_owqovse\", \"type\": \"FS\"}], \"notes\": \"\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": null, \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_snqfv2c\", \"name\": \"Final Release\", \"owner\": \"\", \"status\": \"progress\", \"priority\": \"medium\", \"start\": \"2026-06-18\", \"end\": \"2026-06-24\", \"progress\": 0, \"deps\": [{\"taskId\": \"task_824ol1a\", \"type\": \"FS\"}], \"notes\": \"\", \"isMilestone\": false, \"baselineStart\": null, \"baselineEnd\": null, \"parentId\": null, \"isCollapsed\": false, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-24\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_ixbcpat\", \"name\": \"Documentation\", \"owner\": \"Anjali Pandey\", \"status\": \"todo\", \"priority\": \"high\", \"start\": \"2026-06-04\", \"end\": \"2026-06-10\", \"progress\": 0, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"parentId\": \"task_owqovse\", \"assignedResources\": [{\"resourceId\": \"res_kwbk9xr\", \"allocation\": 100}], \"workHours\": null, \"customFieldValues\": {}, \"baselineStart\": null, \"baselineEnd\": null, \"isCollapsed\": false, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-12\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}], \"comments\": [], \"resources\": [{\"id\": \"res_pheg23k\", \"name\": \"Ayush Mandhana\", \"hoursPerDay\": 8, \"costPerHour\": 0, \"color\": \"#0369a1\", \"hrsPerDay\": 8, \"costPerHr\": 0, \"availableFrom\": null, \"availableTo\": null}, {\"id\": \"res_kwbk9xr\", \"name\": \"Anjali Pandey\", \"hoursPerDay\": 8, \"costPerHour\": 0, \"color\": \"#059669\", \"hrsPerDay\": 8, \"costPerHr\": 0, \"availableFrom\": null, \"availableTo\": null}, {\"id\": \"res_mjmvmzc\", \"name\": \"Akshay Bhivagade\", \"hoursPerDay\": 8, \"costPerHour\": 0, \"color\": \"#ea580c\", \"hrsPerDay\": 8, \"costPerHr\": 0, \"availableFrom\": null, \"availableTo\": null}], \"customFields\": [], \"macros\": [], \"baselines\": [], \"crossDeps\": [], \"leaveCalendar\": {}}, {\"id\": \"proj_1xk7dl8\", \"name\": \"CARB\", \"tasks\": [{\"id\": \"task_8xlqr44\", \"name\": \"Revisit Documentation & build Test Cases\", \"owner\": \"\", \"status\": \"progress\", \"priority\": \"medium\", \"start\": \"2026-05-26\", \"end\": \"2026-06-04\", \"progress\": 65, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"parentId\": null, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"baselineStart\": null, \"baselineEnd\": null, \"isCollapsed\": false, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-05\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_v67tt4d\", \"name\": \"CSV & XML New format\", \"owner\": \"\", \"status\": \"progress\", \"priority\": \"medium\", \"start\": \"2026-05-25\", \"end\": \"2026-06-05\", \"progress\": 55, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"parentId\": null, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"baselineStart\": null, \"baselineEnd\": null, \"isCollapsed\": false, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-04\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_ar5kmti\", \"name\": \"Preparation for Application Document\", \"owner\": \"\", \"status\": \"done\", \"priority\": \"medium\", \"start\": \"2026-05-25\", \"end\": \"2026-06-19\", \"progress\": 100, \"deps\": [], \"notes\": \"\", \"isMilestone\": false, \"parentId\": null, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"baselineStart\": null, \"baselineEnd\": null, \"isCollapsed\": false, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-30\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}, {\"id\": \"task_0h2y9f2\", \"name\": \"Submit Application\", \"owner\": \"\", \"status\": \"todo\", \"priority\": \"critical\", \"start\": \"2026-05-26\", \"end\": \"2026-06-30\", \"progress\": 0, \"deps\": [{\"taskId\": \"task_ar5kmti\", \"type\": \"FS\"}], \"notes\": \"\", \"isMilestone\": false, \"parentId\": null, \"assignedResources\": [], \"workHours\": null, \"customFieldValues\": {}, \"baselineStart\": null, \"baselineEnd\": null, \"isCollapsed\": false, \"constraintType\": \"ASAP\", \"constraintDate\": null, \"deadline\": \"2026-06-30\", \"recurrence\": {\"type\": \"none\", \"interval\": 1, \"count\": null, \"until\": null}, \"comments\": []}], \"comments\": [], \"resources\": [], \"customFields\": [], \"macros\": [], \"baselines\": [], \"crossDeps\": [], \"leaveCalendar\": {}}], \"activeId\": \"proj_p92ei5j\", \"activeView\": \"gantt\", \"zoom\": \"day\", \"sortBy\": \"end\", \"showBaseline\": true, \"showCritical\": true, \"showExpected\": true, \"calMonth\": \"2026-06\", \"globalResources\": [], \"showHistogram\": false, \"autoSchedule\": false, \"activeBaselineIdx\": 0}";
-    const _p=JSON.parse(_s);
+    // [seed data extracted to _SEED_FALLBACK_DATA constant above]
+    const _p=JSON.parse(_SEED_FALLBACK_DATA);
     state.projects=_p.projects.map(p=>{migrateProject(p);return p;});
     state.globalResources=_p.globalResources||[];
     state.activeId=_p.activeId||(state.projects[0]?.id||null);
@@ -1749,6 +1876,11 @@ function getDeadlineStatus(t){
 // AUTO-SCHEDULE CASCADE
 // When a task's dates change, ripple forward through deps
 // ══════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════
+// MODULE: SCHEDULING ENGINE
+// autoScheduleCascade, calcCriticalPath, workingDaysBetween
+// Stable API — see Feature Lock checks S01–S04
+// ══════════════════════════════════════════════════════════════
 function autoScheduleCascade(p, changedTaskId){
   if(!state.autoSchedule||!p||!p.tasks)return;
   const byId={};p.tasks.forEach(t=>{byId[t.id]=t;});
@@ -2001,6 +2133,22 @@ function renderLeaveList(resourceId){
 
 
 // ══════════════════════════════════════════════════════════
+// ── Relative time helper ─────────────────────────────────────────
+function relativeTime(isoString){
+  if(!isoString) return '';
+  const now = Date.now();
+  const then = new Date(isoString).getTime();
+  const diff = Math.floor((now - then) / 1000); // seconds
+  if(diff < 60)   return 'just now';
+  if(diff < 3600) return `${Math.floor(diff/60)}m ago`;
+  if(diff < 86400)return `${Math.floor(diff/3600)}h ago`;
+  if(diff < 86400*2) return 'yesterday';
+  if(diff < 86400*7) return `${Math.floor(diff/86400)} days ago`;
+  if(diff < 86400*30) return `${Math.floor(diff/86400/7)}w ago`;
+  if(diff < 86400*365) return `${Math.floor(diff/86400/30)}mo ago`;
+  return `${Math.floor(diff/86400/365)}y ago`;
+}
+
 // TASK COMMENTS (threaded, with timestamps)
 // ══════════════════════════════════════════════════════════
 function openTaskComments(taskId){
@@ -2023,26 +2171,35 @@ function renderTaskCommentThread(taskId){
   const t=p.tasks.find(x=>x.id===taskId);if(!t)return;
   const comments=t.comments||[];
   if(!comments.length){
-    thread.innerHTML='<div style="text-align:center;padding:24px;color:var(--ink-4);font-size:12px">No comments yet. Be the first to comment.</div>';
+    thread.innerHTML='<div style="text-align:center;padding:28px 16px;color:var(--ink-4);font-size:12px">No comments yet. Add the first one below.</div>';
     return;
   }
+  const AVATAR_COLORS=['#0369a1','#0891b2','#16a34a','#7c3aed','#db2777','#ea580c','#65a30d','#475569'];
+  const authorColorMap={};let colorIdx=0;
+  const typeClsMap={'Decision':'tc-type-decision','Blocker':'tc-type-blocker','Update':'tc-type-update','Risk':'tc-type-risk','':'tc-type-general','General':'tc-type-general'};
   comments.forEach(c=>{
-    const div=document.createElement('div');
-    div.style.cssText='display:flex;gap:10px;margin-bottom:14px';
+    if(!authorColorMap[c.author]){authorColorMap[c.author]=AVATAR_COLORS[colorIdx%AVATAR_COLORS.length];colorIdx++;}
+    const color=authorColorMap[c.author];
     const initials=(c.author||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    div.innerHTML=`
-      <div style="width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">${escapeHtml(initials)}</div>
-      <div style="flex:1">
-        <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:3px">
-          <span style="font-weight:700;font-size:12px">${escapeHtml(c.author||'Anonymous')}</span>
-          <span style="font-size:10px;color:var(--ink-4);font-family:var(--font-mono)">${new Date(c.at).toLocaleDateString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</span>
-          ${c.type?`<span style="font-size:10px;padding:1px 6px;border-radius:3px;background:var(--paper-tint);color:var(--ink-3)">${escapeHtml(c.type)}</span>`:''}
+    const typeCls=typeClsMap[c.type||'']||'tc-type-general';
+    const typeBadge=c.type?`<span class="tc-type-badge ${typeCls}">${escapeHtml(c.type)}</span>`:'';
+    const timeLabel=relativeTime(c.at);
+    const fullTime=c.at?new Date(c.at).toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'';
+    const item=document.createElement('div');
+    item.className='tc-comment-item';
+    item.innerHTML=`
+      <div class="tc-avatar" style="background:${color}">${escapeHtml(initials)}</div>
+      <div class="tc-body">
+        <div class="tc-meta">
+          <span class="tc-author">${escapeHtml(c.author||'Anonymous')}</span>
+          <span class="tc-time" title="${escapeHtml(fullTime)}">${timeLabel}</span>
+          ${typeBadge}
         </div>
-        <div style="font-size:12px;line-height:1.5;color:var(--ink)">${escapeHtml(c.text)}</div>
+        <div class="tc-text">${escapeHtml(c.text)}</div>
       </div>
-      <button class="icon-btn" onclick="deleteTaskComment('${taskId}','${c.id}')" style="opacity:.4;font-size:11px">×</button>
+      <button class="tc-delete-btn" title="Delete comment" onclick="deleteTaskComment('${taskId}','${c.id}')">×</button>
     `;
-    thread.appendChild(div);
+    thread.appendChild(item);
   });
   thread.scrollTop=thread.scrollHeight;
 }
@@ -2679,7 +2836,10 @@ function renderTaskList(){
     const collapseEl=isSum?`<span class="collapse-toggle${t.isCollapsed?' collapsed':''}" data-task-id="${t.id}">▼</span>`:'<span class="collapse-spacer"></span>';
     const wbsCode=wbsCodeCache[t.id]||'';
     const allocWarn=getTaskAllocationWarning(t);
-    row.innerHTML=`<div class="wbs-code">${wbsCode}</div><div class="task-name"><span class="indent" style="width:${indentPx}px"></span>${collapseEl}<span class="t-text">${escapeHtml(t.name)}</span>${t.isMilestone?'<span class="ms-badge">◆</span>':''}</div><div class="owner-pill">${escapeHtml(resourceLabel(t))}</div>`;
+    const hasCmt=t.comments&&t.comments.length>0;
+    const cmtBadge=hasCmt?`<span class="task-comment-dot" title="${t.comments.length} comment${t.comments.length>1?'s':''}">${t.comments.length}</span>`:'';
+    if(hasCmt)row.classList.add('task-has-comment');
+    row.innerHTML=`<div class="wbs-code">${wbsCode}</div><div class="task-name"><span class="indent" style="width:${indentPx}px"></span>${collapseEl}<span class="t-text">${escapeHtml(t.name)}</span>${t.isMilestone?'<span class="ms-badge">◆</span>':''}${cmtBadge}</div><div class="owner-pill">${escapeHtml(resourceLabel(t))}</div>`;
     row.onclick=(ev)=>{
       if(ev.target.classList.contains('collapse-toggle')){ev.stopPropagation();t.isCollapsed=!t.isCollapsed;saveState();renderTaskList();renderChart();return;}
       openTaskModal(t.id);
@@ -2724,6 +2884,11 @@ function getDateRange(tasks,comments){
 }
 
 // ====== GANTT CHART ======
+// ══════════════════════════════════════════════════════════════
+// MODULE: GANTT RENDERING ENGINE
+// renderChart, drawBar, drawSummaryBar, drawMilestone, drawDepArrow
+// Stable API — see Feature Lock checks F01–F11, V01
+// ══════════════════════════════════════════════════════════════
 function renderChart(){
   const headerSvg=document.getElementById('chartHeaderSvg'),bodySvg=document.getElementById('chartBodySvg');
   headerSvg.innerHTML='';bodySvg.innerHTML='';
@@ -2760,16 +2925,9 @@ function renderChart(){
   drawTimeAxis(headerSvg,min,max,dayPx,width);
   drawCommentsLane(headerSvg,p,min,max,dayPx,width);
   drawGridAndRows(bodySvg,visible,min,max,dayPx,width,bodyHeight,rowY,rowH);
-  // dependency arrows
+  // ── bars / milestones / summary bars FIRST ──────────────────
+  // Bars must be drawn before connectors so bars are always visually on top
   const idxOf={};visible.forEach((t,i)=>{idxOf[t.id]=i;});
-  visible.forEach((t,i)=>{(t.deps||[]).forEach(dep=>{
-    try{
-      const depId=typeof dep==='string'?dep:dep.taskId;
-      const depType=typeof dep==='string'?'FS':(dep.type||'FS');
-      if(idxOf[depId]!==undefined)drawDepArrow(bodySvg,{task:visible[idxOf[depId]],index:idxOf[depId]},{task:t,index:i,depType},min,dayPx,rowY,rowH);
-    }catch(e){console.warn('Dep arrow error:',e);}
-  });});
-  // bars / milestones / summary bars
   visible.forEach((t,i)=>{
     try{
       if(hasChildren(t.id,childrenOf))drawSummaryBar(bodySvg,t,i,min,dayPx,childrenOf,byId,rowY,rowH);
@@ -2780,6 +2938,57 @@ function renderChart(){
       if(s&&e2){const xS=daysBetween(min,s)*dayPx,w=Math.max(8,(daysBetween(min,e2)+1)*dayPx-xS);const ry=rowY[i]||i*ROW_H,rh=rowH[i]||ROW_H;const fb=document.createElementNS('http://www.w3.org/2000/svg','rect');fb.setAttribute('x',xS);fb.setAttribute('y',ry+4);fb.setAttribute('width',w);fb.setAttribute('height',rh-8);fb.setAttribute('rx',3);fb.setAttribute('fill','#4F46E5');fb.setAttribute('fill-opacity','.3');bodySvg.appendChild(fb);}
     }
   });
+  // ── Build task bounding rects for obstacle-aware routing ────
+  // Each rect: {x, y, w, h, right, bottom} in SVG body coordinates
+  const _barHfn=(rh)=>Math.min(22,Math.max(16,Math.round(rh*0.58)));
+  const _barYfn=(ry,rh)=>ry+Math.round((rh-_barHfn(rh))/2);
+  const _sumBeamH=8;
+  const _sumBeamYfn=(ry,rh)=>ry+Math.round((rh-_sumBeamH)/2)-2;
+  const taskRects=[];
+  visible.forEach((t,i)=>{
+    const ry=rowY[i]!=null?rowY[i]:i*ROW_H;
+    const rh=rowH[i]!=null?rowH[i]:ROW_H;
+    let rx,rw,rectY,rectH;
+    if(t.isMilestone){
+      const ms_s=parseDate(t.start);
+      if(!ms_s){taskRects.push(null);return;}
+      const ms_cx=daysBetween(min,ms_s)*dayPx+dayPx/2;
+      const ms_r=9;
+      rx=ms_cx-ms_r; rw=ms_r*2;
+      rectY=ry+rh/2-ms_r; rectH=ms_r*2;
+    } else if(hasChildren(t.id,childrenOf)){
+      const ed=effectiveDates(t,childrenOf,byId);
+      const es=parseDate(ed.start),ee=parseDate(ed.end);
+      if(!es||!ee){taskRects.push(null);return;}
+      rx=daysBetween(min,es)*dayPx;
+      rw=Math.max(8,(daysBetween(min,ee)+1)*dayPx-rx);
+      rectY=_sumBeamYfn(ry,rh); rectH=_sumBeamH+9; // beam + chevron
+    } else {
+      const ts=parseDate(t.start),te=parseDate(t.end);
+      if(!ts||!te){taskRects.push(null);return;}
+      rx=daysBetween(min,ts)*dayPx;
+      rw=Math.max(6,(daysBetween(min,te)+1)*dayPx-rx);
+      rectY=_barYfn(ry,rh); rectH=_barHfn(rh);
+    }
+    taskRects.push({x:rx,y:rectY,w:rw,h:rectH,right:rx+rw,bottom:rectY+rectH,taskId:t.id});
+  });
+  const _firstBar=bodySvg.querySelector('.chart-bar');
+  visible.forEach((t,i)=>{(t.deps||[]).forEach(dep=>{
+    try{
+      const depId=typeof dep==='string'?dep:dep.taskId;
+      const depType=typeof dep==='string'?'FS':(dep.type||'FS');
+      const lag=(dep&&dep.lag)||0;
+      if(idxOf[depId]!==undefined){
+        const arrowEl=drawDepArrow(null,{task:visible[idxOf[depId]],index:idxOf[depId]},{task:t,index:i,depType,lag},min,dayPx,rowY,rowH,taskRects,childrenOf,byId);
+        if(arrowEl){
+          if(_firstBar)bodySvg.insertBefore(arrowEl,_firstBar);
+          else bodySvg.appendChild(arrowEl);
+        }
+      }
+    }catch(e){console.warn('Dep arrow error:',e);}
+  });});
+  // TASK 8 — Comment markers on body SVG (red vertical line + dot per date)
+  drawCommentMarkers(bodySvg,p,min,dayPx,bodyHeight);
   const today=todayMid();
   if(today>=min&&today<=max){
     const x=daysBetween(min,today)*dayPx+dayPx/2;
@@ -2796,14 +3005,37 @@ function drawTimeAxis(svg,min,max,dayPx,width){
 }
 
 function drawCommentsLane(svg,project,min,max,dayPx,width){
-  const y0=AXIS_H;
-  svg.appendChild(svgEl('rect',{x:0,y:y0,width,height:COMMENTS_H,fill:'#EEF2FF',opacity:1}));
-  svg.appendChild(svgEl('line',{x1:0,x2:width,y1:y0,y2:y0,stroke:COLORS.commentBorder,'stroke-width':.8}));
-  const today=todayMid();
-  if(today>=min&&today<=max){const x=daysBetween(min,today)*dayPx+dayPx/2;svg.appendChild(svgEl('line',{x1:x,x2:x,y1:y0,y2:y0+COMMENTS_H,stroke:COLORS.accent,'stroke-width':1.5,opacity:.7,'stroke-dasharray':'3 2'}));}
-  const comments=project?.comments||[];if(!comments.length)return;
-  const byDate={};comments.forEach(c=>{if(!byDate[c.date])byDate[c.date]=[];byDate[c.date].push(c);});
-  Object.entries(byDate).forEach(([date,cmts])=>{const d=parseDate(date);if(!d)return;const x=daysBetween(min,d)*dayPx+dayPx/2;if(x<-20||x>width+20)return;const count=cmts.length,color=cmts[0].color||'#3B82F6';const g=svgEl('g',{'pointer-events':'none','data-comment-date':date});g.appendChild(svgEl('line',{x1:x,x2:x,y1:y0+22,y2:y0+COMMENTS_H-2,stroke:color,'stroke-width':1,'stroke-dasharray':'2 2',opacity:.65}));const bw=count>1?28:22,bh=18,bx=x-bw/2,by=y0+2;g.appendChild(svgEl('rect',{x:bx,y:by,width:bw,height:bh,rx:9,ry:9,fill:color}));const lbl=svgEl('text',{x,y:by+12,fill:'#fff','font-family':'Caladea, Cambria, Georgia, serif','font-size':10,'font-weight':700,'text-anchor':'middle','pointer-events':'none'});lbl.textContent=count>1?`${count}`:'✎';g.appendChild(lbl);svg.appendChild(g);});
+  // COMMENTS_H is now 0 — no header lane. This fn is a no-op.
+  // All comment markers are drawn in drawCommentMarkers (body SVG).
+}
+
+// TASK 8 — Comment markers on body SVG: red vertical line + dot per date
+function drawCommentMarkers(bodySvg,project,min,dayPx,bodyHeight){
+  const comments=project?.comments||[];
+  if(!comments.length)return;
+  const byDate={};
+  comments.forEach(c=>{if(!byDate[c.date])byDate[c.date]=[];byDate[c.date].push(c);});
+  Object.entries(byDate).forEach(([date,cmts])=>{
+    const d=parseDate(date);if(!d)return;
+    const x=daysBetween(min,d)*dayPx+dayPx/2;
+    const count=cmts.length;
+    const g=svgEl('g',{'class':'comment-marker','data-comment-date':date,'style':'cursor:pointer'});
+    // Red vertical line full body height
+    g.appendChild(svgEl('line',{x1:x,x2:x,y1:0,y2:bodyHeight,
+      stroke:'#ef4444','stroke-width':1.5,opacity:.55,'stroke-dasharray':'4 3'}));
+    // Red dot at top
+    const dotR=6;
+    g.appendChild(svgEl('circle',{cx:x,cy:dotR+2,r:dotR,fill:'#ef4444',opacity:.9}));
+    // Count or pencil icon in dot
+    const lbl=svgEl('text',{x,y:dotR+2,fill:'#fff',
+      'font-family':'Space Mono, monospace','font-size':count>1?8:9,'font-weight':700,
+      'text-anchor':'middle','dominant-baseline':'middle','pointer-events':'none'});
+    lbl.textContent=count>1?String(count):'✎';
+    g.appendChild(lbl);
+    // Click → open comment panel for this date
+    g.addEventListener('click',()=>openCommentModal(date));
+    bodySvg.appendChild(g);
+  });
 }
 
 function drawGridAndRows(svg,tasks,min,max,dayPx,width,height,rowY,rowH){
@@ -2832,7 +3064,8 @@ function drawBar(svg,t,i,min,dayPx,rowY,rowH){
   const hasBase=state.showBaseline&&t.baselineStart&&t.baselineEnd;
 
   const _ry=(rowY&&rowY[i]!=null)?rowY[i]:i*ROW_H,_rh=(rowH&&rowH[i]!=null)?rowH[i]:ROW_H;
-  const barY=_ry+Math.round(_rh*.18), barH=_rh-Math.round(_rh*.36);
+  const barH=Math.min(22,Math.max(16,Math.round(_rh*0.58)));  // 58% of row, clamped 16-22px
+  const barY=_ry+Math.round((_rh-barH)/2);                    // exact centering: rowTop + (rowH-barH)/2
   const g=svgEl('g',{class:'chart-bar','data-task-id':t.id});
 
   // ── BASELINE BAR ─────────────────────────────────────────
@@ -2869,11 +3102,11 @@ function drawBar(svg,t,i,min,dayPx,rowY,rowH){
   if(w>30){
     const owner=typeof resourceLabel==='function'?resourceLabel(t):'';
     const raw=owner&&owner!=='—'?`${t.name} · ${owner}`:t.name;
-    const chars=Math.floor((w-14)/6.2);
-    const label=raw.length>chars?raw.slice(0,chars-1)+'…':raw;
-    const txt=svgEl('text',{x:xS+8,y:barY+barH/2+4,fill:COLORS.ink,
+    const chars=Math.floor((w-18)/6.2);
+    const label=raw.length>chars?raw.slice(0,Math.max(1,chars-1))+'…':raw;
+    const txt=svgEl('text',{x:xS+8,y:barY+barH/2,fill:COLORS.ink,
       'font-family':'Caladea, Cambria, Georgia, serif','font-size':11,
-      'font-weight':600,'pointer-events':'none'});
+      'font-weight':600,'pointer-events':'none','dominant-baseline':'middle'});
     txt.textContent=label;g.appendChild(txt);
   }
 
@@ -2886,10 +3119,10 @@ function drawBar(svg,t,i,min,dayPx,rowY,rowH){
     const healths={done:'✓',progress:'●','risk':'▲',blocked:'✕',todo:'○'};
     const hIcon=healths[t.status]||'';
     const afterLabel=t.isMilestone?`◆ ${pct}%`:`${days2}d · ${pct}% ${hIcon}`;
-    const alx=xS+w+6, aly=barY+barH/2+4;
+    const alx=xS+w+6, aly=barY+barH/2;
     const al=svgEl('text',{x:alx,y:aly,fill:statusMeta.hex,
       'font-family':'Space Mono, monospace','font-size':9,'font-weight':700,
-      'pointer-events':'none','dominant-baseline':'auto'});
+      'pointer-events':'none','dominant-baseline':'middle'});
     al.textContent=afterLabel;
     g.appendChild(al);
   }
@@ -2903,6 +3136,27 @@ function drawBar(svg,t,i,min,dayPx,rowY,rowH){
       g.appendChild(svgEl('polygon',{
         points:`${ex-5},${barY-6} ${ex+5},${barY-6} ${ex},${barY-1}`,
         fill:onTrack?'#059669':'#DC2626','opacity':.9}));
+    }
+  }
+
+  // ── COMMENT INDICATOR ─────────────────────────────────────
+  // Vertical line from top of row + dot — visible when task has comments
+  if(t.comments&&t.comments.length){
+    const cmtCount=t.comments.length;
+    const cmtX=Math.max(2,xS-2); // left edge of bar, never negative
+    const lineTop=_ry+2, lineBot=_ry+_rh-2;
+    const dotR=5, dotCY=_ry+_rh/2;
+    // vertical accent line left of bar
+    g.appendChild(svgEl('line',{x1:cmtX,x2:cmtX,y1:lineTop,y2:lineBot,
+      stroke:'#3B82F6','stroke-width':2.5,opacity:.85,'stroke-linecap':'round'}));
+    // dot
+    g.appendChild(svgEl('circle',{cx:cmtX,cy:dotCY,r:dotR,fill:'#3B82F6',opacity:.9}));
+    // count label inside dot (only if >1)
+    if(cmtCount>1){
+      const ct=svgEl('text',{x:cmtX,y:dotCY,fill:'#fff',
+        'font-family':'Space Mono, monospace','font-size':6,'font-weight':700,
+        'text-anchor':'middle','pointer-events':'none','dominant-baseline':'middle'});
+      ct.textContent=cmtCount;g.appendChild(ct);
     }
   }
 
@@ -2937,7 +3191,9 @@ function drawSummaryBar(svg,t,i,min,dayPx,childrenOf,byId,rowY,rowH){
   const g=svgEl('g',{class:'chart-bar summary-bar','data-task-id':t.id});
 
   const _ry=(rowY&&rowY[i]!=null)?rowY[i]:i*ROW_H,_rh=(rowH&&rowH[i]!=null)?rowH[i]:ROW_H;
-  const beamY=_ry+3, beamH=Math.min(8,Math.round(_rh*.22));
+  // Summary beam: 8px tall, vertically centred in row (slightly above centre for MS Project look)
+  const beamH=8;
+  const beamY=_ry+Math.round((_rh-beamH)/2)-2; // 2px above exact centre
 
   // ── BEAM (top-of-row, full width) ──────────────────────
   g.appendChild(svgEl('rect',{x:xS,y:beamY,width:w,height:beamH,rx:2,
@@ -2973,10 +3229,10 @@ function drawSummaryBar(svg,t,i,min,dayPx,childrenOf,byId,rowY,rowH){
     const days2=(s2&&e2)?Math.max(1,daysBetween(s2,e2)+1):'—';
     const pct=(ed.progress||0)|0;
     const afterLabel=`${days2}d · ${pct}%`;
-    const alx=xS+w+6, aly=beamY+beamH/2+4;
+    const alx=xS+w+6, aly=beamY+beamH/2;
     const al=svgEl('text',{x:alx,y:aly,fill:priColor,
       'font-family':'Space Mono, monospace','font-size':9,'font-weight':700,
-      'pointer-events':'none'});
+      'pointer-events':'none','dominant-baseline':'middle'});
     al.textContent=afterLabel;
     g.appendChild(al);
   }
@@ -2986,10 +3242,10 @@ function drawSummaryBar(svg,t,i,min,dayPx,childrenOf,byId,rowY,rowH){
     const owner=typeof resourceLabel==='function'?resourceLabel(t):'';
     const raw=owner&&owner!=='—'?`${t.name} · ${owner}`:t.name;
     const chars=Math.floor((w-6)/6.2);
-    const label=raw.length>chars?raw.slice(0,chars-1)+'…':raw;
-    const txt=svgEl('text',{x:xS+5,y:beamY+beamH+9+11,fill:COLORS.ink,
+    const label=raw.length>chars?raw.slice(0,Math.max(1,chars-1))+'…':raw;
+    const txt=svgEl('text',{x:xS+5,y:beamY+beamH+11,fill:COLORS.ink,
       'font-family':'Caladea, Cambria, Georgia, serif','font-size':11,
-      'font-weight':700,'pointer-events':'none'});
+      'font-weight':700,'pointer-events':'none','dominant-baseline':'auto'});
     txt.textContent=label;g.appendChild(txt);
   }
 
@@ -3030,53 +3286,254 @@ function drawMilestone(svg,t,i,min,dayPx,rowY,rowH){
   }
   // Current diamond
   g.appendChild(svgEl('polygon',{points:`${cx},${curCY-r} ${cx+r},${curCY} ${cx},${curCY+r} ${cx-r},${curCY}`,fill:t.status==='done'?priColor:COLORS.card,'fill-opacity':t.status==='done'?.85:1,stroke,'stroke-width':(isCritical||isOverdue)?2.5:2}));
-  if(t.name){const txt=svgEl('text',{x:cx+r+6,y:curCY+4,fill:COLORS.ink,'font-family':'Caladea, Cambria, Georgia, serif','font-size':12,'font-weight':600,'pointer-events':'none'});txt.textContent=t.name+(resourceLabel(t)&&resourceLabel(t)!=='—'?` · ${resourceLabel(t)}`:'');g.appendChild(txt);}
+  if(t.name){const txt=svgEl('text',{x:cx+r+6,y:curCY,fill:COLORS.ink,'font-family':'Caladea, Cambria, Georgia, serif','font-size':12,'font-weight':600,'pointer-events':'none','dominant-baseline':'middle'});txt.textContent=t.name+(resourceLabel(t)&&resourceLabel(t)!=='—'?` · ${resourceLabel(t)}`:'');g.appendChild(txt);}
   g.insertBefore(svgEl('rect',{x:cx-r-2,y:_ry,width:(r+2)*2,height:_rh,fill:'transparent',style:'cursor:pointer'}),g.firstChild);
   svg.appendChild(g);attachBarHandlers(g,t);
 }
 
-// [F03-LOCK] Dep Arrow — uses pRY/pRH from rowY/rowH, not i*ROW_H
-function drawDepArrow(svg,pred,succ,min,dayPx,rowY,rowH){
-  const pt=pred.task,st=succ.task;
-  const pS=parseDate(pt.start),pE=parseDate(pt.end);
-  const sS=parseDate(st.start),sE=parseDate(st.end);
-  if(!pS||!pE||!sS||!sE)return;
+// ══════════════════════════════════════════════════════════════
+// MODULE: DEPENDENCY ROUTING ENGINE
+// drawDepArrow → routeConnector (shared for FS/SS/FF/SF) → pts2path
+// Extension: add new dep types by calling routeConnector() only.
+// Never add a separate routing function — see Developer Guide.
+// Stable API — see Feature Lock checks F03–F06
+// ══════════════════════════════════════════════════════════════
+// childrenOf/byId2: pre-built WBS tree passed from renderChart (avoids O(n²) rebuild)
+function drawDepArrow(svg,pred,succ,min,dayPx,rowY,rowH,taskRects,childrenOf,byId2){
+  const pt=pred.task, st=succ.task;
+  const pS=parseDate(pt.start), pE=parseDate(pt.end);
+  const sS=parseDate(st.start), sE=parseDate(st.end);
+  if(!pS||!pE||!sS||!sE) return null;
+
   const type=succ.depType||'FS';
-  const pi=pred.index,si=succ.index;
+  const pi=pred.index, si=succ.index;
   const pRY=(rowY&&rowY[pi]!=null)?rowY[pi]:pi*ROW_H;
   const pRH=(rowH&&rowH[pi]!=null)?rowH[pi]:ROW_H;
   const sRY=(rowY&&rowY[si]!=null)?rowY[si]:si*ROW_H;
   const sRH=(rowH&&rowH[si]!=null)?rowH[si]:ROW_H;
-  const predMidY=pRY+pRH/2;
-  const succMidY=sRY+sRH/2;
-  const onCP=state.showCritical&&criticalIds.has(pt.id)&&criticalIds.has(st.id);
-  const TYPE_CLR={FS:'#475569',SS:'#0369a1',FF:'#6d28d9',SF:'#b45309'};
-  const clr=onCP?'#dc2626':TYPE_CLR[type]||'#475569';
-  const sw=onCP?2.5:1.8;
-  const G=14;
-  let d='',ax=0,aDir=1;
-  if(type==='FS'){
-    const x1=(daysBetween(min,pE)+1)*dayPx,x2=daysBetween(min,sS)*dayPx;
-    if(x1+G<=x2){d=`M${x1},${predMidY} H${x1+G} V${succMidY} H${x2}`;}
-    else{const bY=pRY+pRH+4;d=`M${x1},${predMidY} H${x1+G} V${bY} H${x2-G} V${succMidY} H${x2}`;}
-    ax=x2;aDir=1;
-  } else if(type==='SS'){
-    const x1=daysBetween(min,pS)*dayPx,x2=daysBetween(min,sS)*dayPx;
-    d=`M${x1},${predMidY} H${Math.min(x1,x2)-G} V${succMidY} H${x2}`;ax=x2;aDir=1;
-  } else if(type==='FF'){
-    const x1=(daysBetween(min,pE)+1)*dayPx,x2=(daysBetween(min,sE)+1)*dayPx;
-    d=`M${x1},${predMidY} H${Math.max(x1,x2)+G} V${succMidY} H${x2}`;ax=x2;aDir=-1;
+
+  // ── Bar geometry — MUST match drawBar/drawSummaryBar exactly ──
+  const _bH=(rh)=>Math.min(22,Math.max(16,Math.round(rh*0.58)));
+  const _bY=(ry,rh)=>ry+Math.round((rh-_bH(rh))/2);
+  const _sbH=8, _sbY=(ry,rh)=>ry+Math.round((rh-_sbH)/2)-2;
+  // childrenOf and byId2 are now received as parameters — no per-arrow rebuild
+
+  // ── Predecessor anchor rect ───────────────────────────────────
+  let pL,pR,pMidY,pT,pB;
+  const pIsSummary=hasChildren(pt.id,childrenOf);
+  if(pt.isMilestone){
+    const cx=daysBetween(min,pS)*dayPx+dayPx/2,r=9;
+    pL=cx-r;pR=cx+r;pT=pRY+pRH/2-r;pB=pRY+pRH/2+r;pMidY=pRY+pRH/2;
+  } else if(pIsSummary){
+    const ed=effectiveDates(pt,childrenOf,byId2);
+    const es=parseDate(ed.start),ee=parseDate(ed.end);
+    pL=es?daysBetween(min,es)*dayPx:daysBetween(min,pS)*dayPx;
+    pR=ee?(daysBetween(min,ee)+1)*dayPx:(daysBetween(min,pE)+1)*dayPx;
+    const by=_sbY(pRY,pRH);pT=by;pB=by+_sbH+9;pMidY=by+_sbH/2;
   } else {
-    const x1=daysBetween(min,pS)*dayPx,x2=(daysBetween(min,sE)+1)*dayPx;
-    d=`M${x1},${predMidY} H${Math.min(x1,x2)-G} V${succMidY} H${x2}`;ax=x2;aDir=-1;
+    pL=daysBetween(min,pS)*dayPx;pR=(daysBetween(min,pE)+1)*dayPx;
+    const bh=_bH(pRH),by=_bY(pRY,pRH);pT=by;pB=by+bh;pMidY=by+bh/2;
   }
-  svg.appendChild(svgEl('path',{d,stroke:clr,'stroke-width':sw,fill:'none',
-    'stroke-linejoin':'round','stroke-linecap':'round',opacity:.9}));
-  const ah=7,aw=4;
-  svg.appendChild(svgEl('polygon',{
-    points:aDir===1?`${ax},${succMidY} ${ax-ah},${succMidY-aw} ${ax-ah},${succMidY+aw}`:`${ax},${succMidY} ${ax+ah},${succMidY-aw} ${ax+ah},${succMidY+aw}`,
-    fill:clr,opacity:.95}));
+
+  // ── Successor anchor rect ─────────────────────────────────────
+  let sL,sR,sMidY,sT,sB;
+  const sIsSummary=hasChildren(st.id,childrenOf);
+  if(st.isMilestone){
+    const cx=daysBetween(min,sS)*dayPx+dayPx/2,r=9;
+    sL=cx-r;sR=cx+r;sT=sRY+sRH/2-r;sB=sRY+sRH/2+r;sMidY=sRY+sRH/2;
+  } else if(sIsSummary){
+    const ed=effectiveDates(st,childrenOf,byId2);
+    const es=parseDate(ed.start),ee=parseDate(ed.end);
+    sL=es?daysBetween(min,es)*dayPx:daysBetween(min,sS)*dayPx;
+    sR=ee?(daysBetween(min,ee)+1)*dayPx:(daysBetween(min,sE)+1)*dayPx;
+    const by=_sbY(sRY,sRH);sT=by;sB=by+_sbH+9;sMidY=by+_sbH/2;
+  } else {
+    sL=daysBetween(min,sS)*dayPx;sR=(daysBetween(min,sE)+1)*dayPx;
+    const bh=_bH(sRH),by=_bY(sRY,sRH);sT=by;sB=by+bh;sMidY=by+bh/2;
+  }
+
+  // ── Constants ─────────────────────────────────────────────────
+  // C_BAR: obstacle inflation. Must be < inter-row gap (~7px with ROW_H=36, barH=22).
+  // Using 4px keeps connectors clear of bars without bleeding into adjacent rows.
+  const C_BAR = 4;   // bar rect inflation for collision detection
+  const OFF   = 10;  // horizontal exit/entry offset from bar edge (matches reference image)
+  const AH    = 6, AW = 3.5; // arrowhead
+
+  // ── Expanded obstacle rects (bar ± C_BAR) ────────────────────
+  // Excludes pred and succ (they are endpoints, not obstacles).
+  const obs = (taskRects||[])
+    .filter(r=>r && r.taskId!==pt.id && r.taskId!==st.id)
+    .map(r=>({x:r.x-C_BAR, y:r.y-C_BAR, r:r.right+C_BAR, b:r.bottom+C_BAR}));
+
+  // ── Segment collision tests ───────────────────────────────────
+  function hBlocked(x1,x2,y){
+    const lo=Math.min(x1,x2),hi=Math.max(x1,x2);
+    return obs.some(o=>lo<o.r && hi>o.x && y>o.y && y<o.b);
+  }
+  function vBlocked(x,y1,y2){
+    const lo=Math.min(y1,y2),hi=Math.max(y1,y2);
+    return obs.some(o=>x>o.x && x<o.r && lo<o.b && hi>o.y);
+  }
+  function segsClear(pts){
+    for(let i=1;i<pts.length;i++){
+      const[x0,y0]=pts[i-1],[x1,y1]=pts[i];
+      if(Math.abs(y1-y0)<0.01){if(hBlocked(x0,x1,y0))return false;}
+      else{if(vBlocked(x0,y0,y1))return false;}
+    }
+    return true;
+  }
+
+  // ── SVG path from waypoints ───────────────────────────────────
+  function pts2path(pts){
+    if(!pts||pts.length<2)return '';
+    let d=`M${Math.round(pts[0][0])},${Math.round(pts[0][1])}`;
+    for(let i=1;i<pts.length;i++){
+      const dx=pts[i][0]-pts[i-1][0],dy=pts[i][1]-pts[i-1][1];
+      if(Math.abs(dx)>0.01) d+=` H${Math.round(pts[i][0])}`;
+      if(Math.abs(dy)>0.01) d+=` V${Math.round(pts[i][1])}`;
+    }
+    return d;
+  }
+
+  // ── Universal routing engine ──────────────────────────────────
+  // fromX/Y: connector start (pred bar edge at midY)
+  // toX/Y:   connector end   (succ bar edge at midY)
+  // exitDir: +1=right, -1=left  (direction away from pred)
+  // entryDir:+1=enter from left, -1=enter from right
+  // pRowY/pRowH, sRowY/sRowH: row slot geometry for bypass lanes
+  function routeConnector(fromX,fromY,toX,toY,exitDir,entryDir,pRowY,pRowH,sRowY,sRowH){
+    const tipX = toX;
+    const endX = toX - entryDir*AH;    // path terminus (arrowhead base)
+    const elbX = fromX + exitDir*OFF;  // exit elbow X
+
+    // ── P1: straight horizontal (same Y) ─────────────────────
+    if(Math.abs(fromY-toY)<0.5){
+      const pts=[[fromX,fromY],[endX,toY]];
+      if(segsClear(pts)) return{pts,tipX,tipY:toY};
+    }
+
+    // ── P2: 3-segment H→V→H ──────────────────────────────────
+    // Exactly what MS Project draws for standard FS with clearance.
+    // elbX steps OFF pixels from pred edge, drops straight to toY, approaches succ.
+    //
+    // GUARD: if elbX falls inside the successor bar's x-range, the V segment
+    // would visually pass through the target bar even though the successor is
+    // excluded from obs (correctly, since it is the endpoint).
+    // In that case, skip P2 and go to P3.
+    const succXMin = toX - entryDir * (AH);       // leftmost safe approach point
+    const succXMax = toX + entryDir * (sRH * 10); // rough successor right bound
+    // For FS/FF (entryDir=+1): elbX must be < sL (toX) to not enter succ from right
+    // For SS/SF (entryDir=-1): elbX must be > sR (toX) to not enter succ from left
+    const elbInSucc = entryDir === +1
+      ? (elbX > toX - AH && elbX < toX + (sRH * 20))   // elbX is inside or past succ left
+      : (elbX < toX + AH && elbX > toX - (sRH * 20));  // elbX is inside or past succ right
+    // Also reject P2 if the horizontal return segment at toY passes through any obs
+    const p2pts=[
+      [fromX, fromY],
+      [elbX,  fromY],
+      [elbX,  toY  ],
+      [endX,  toY  ]
+    ];
+    if(!elbInSucc && segsClear(p2pts)) return{pts:p2pts,tipX,tipY:toY};
+
+    // ── P3: 5-segment H→V→H→V→H with row-gap bypass lane ────
+    // Used when the V drop at elbX is blocked (e.g. intermediate task bar
+    // or overlapping horizontal bar is in the way).
+    //
+    // Bypass lane Y: midpoint of the inter-row gap.
+    // Use ROW boundaries (not bar boundaries) so the lane is always in
+    // the whitespace between rows, regardless of bar height or C_BAR size.
+    //
+    // When going downward (fromY < toY):
+    //   lane = bottom of pred's row + half the gap to succ's row top
+    // When going upward:
+    //   lane = top of succ's row - half the gap to pred's row bottom
+
+    let bypassY;
+    if(Math.abs(fromY-toY)<0.5){
+      // Same row — go outside the row
+      bypassY = exitDir>0 ? pRowY+pRowH+C_BAR : pRowY-C_BAR;
+    } else if(fromY<toY){
+      // Going downward — lane between pred's row bottom and succ's row top
+      const gapTop  = pRowY+pRowH;
+      const gapBot  = sRowY;
+      bypassY = gapTop + Math.max(0,(gapBot-gapTop))/2;
+      bypassY = Math.max(bypassY, pB+C_BAR); // stay below pred bar
+    } else {
+      // Going upward — lane between succ's row bottom and pred's row top
+      const gapTop  = sRowY+sRowH;
+      const gapBot  = pRowY;
+      bypassY = gapTop + Math.max(0,(gapBot-gapTop))/2;
+      bypassY = Math.min(bypassY, pT-C_BAR); // stay above pred bar
+    }
+
+    // Approach X: OFF before target on entry side
+    const approachX = toX - entryDir*(OFF+AH);
+
+    const p3pts=[
+      [fromX,     fromY  ],
+      [elbX,      fromY  ],
+      [elbX,      bypassY],
+      [approachX, bypassY],
+      [approachX, toY    ],
+      [endX,      toY    ]
+    ];
+    if(segsClear(p3pts)) return{pts:p3pts,tipX,tipY:toY};
+
+    // ── Fallback: extended backtrack ───────────────────────────
+    // Exit further right (past successor) then approach from left side.
+    const backX = Math.max(fromX,toX) + exitDir*OFF*2;
+    const fbPts=[
+      [fromX,  fromY  ],
+      [backX,  fromY  ],
+      [backX,  bypassY],
+      [approachX,bypassY],
+      [approachX,toY  ],
+      [endX,   toY    ]
+    ];
+    // Use regardless — better than nothing
+    return{pts:segsClear(fbPts)?fbPts:p2pts,tipX,tipY:toY};
+  }
+
+  // ── Wire dep type to routing engine ──────────────────────────
+  const onCP=state.showCritical&&criticalIds.has(pt.id)&&criticalIds.has(st.id);
+  const TYPE_CLR={FS:'#64748b',SS:'#0369a1',FF:'#6d28d9',SF:'#b45309'};
+  const clr=onCP?'#dc2626':TYPE_CLR[type]||'#64748b';
+  const sw =onCP?2.5:1.5;
+
+  let result;
+  if(type==='FS'){
+    result=routeConnector(pR,pMidY,sL,sMidY,+1,+1,pRY,pRH,sRY,sRH);
+  } else if(type==='SS'){
+    result=routeConnector(pL,pMidY,sL,sMidY,-1,+1,pRY,pRH,sRY,sRH);
+  } else if(type==='FF'){
+    result=routeConnector(pR,pMidY,sR,sMidY,+1,-1,pRY,pRH,sRY,sRH);
+  } else { // SF
+    result=routeConnector(pL,pMidY,sR,sMidY,-1,-1,pRY,pRH,sRY,sRH);
+  }
+  if(!result) return null;
+
+  const d    = pts2path(result.pts);
+  const tipX = result.tipX;
+  const tipY = result.tipY;
+  const aDir = (type==='FS'||type==='SS')?+1:-1;
+  if(!d) return null;
+
+  // ── Arrowhead ─────────────────────────────────────────────────
+  const arrowPts=aDir===1
+    ?`${tipX},${tipY} ${tipX-AH},${tipY-AW} ${tipX-AH},${tipY+AW}`
+    :`${tipX},${tipY} ${tipX+AH},${tipY-AW} ${tipX+AH},${tipY+AW}`;
+
+  const gEl=svgEl('g',{class:'dep-arrow','data-type':type,'data-pred':pt.id,'data-succ':st.id});
+  gEl.appendChild(svgEl('path',{d,stroke:clr,'stroke-width':sw,fill:'none',
+    'stroke-linejoin':'round','stroke-linecap':'butt',opacity:.9}));
+  gEl.appendChild(svgEl('polygon',{points:arrowPts,fill:clr,opacity:.95}));
+  if(svg) svg.appendChild(gEl);
+  return gEl;
 }
+
+
+
 function attachBarHandlers(g,task){
   g.addEventListener('mousedown',e=>{e.preventDefault();const handle=e.target.getAttribute('data-handle');currentDrag={taskId:task.id,mode:handle?`resize-${handle}`:'move',startX:e.clientX,origStart:task.start,origEnd:task.end,lastDdays:null};g.classList.add('dragging');document.body.style.userSelect='none';hideTooltip();});
   g.addEventListener('mouseenter',e=>{if(!currentDrag)showTooltip(task,e);});
@@ -3808,35 +4265,76 @@ function addCustomField(){
 
 // ====== COMMENT LANE + MODAL ======
 function setupCommentInteraction(){
-  const overlay=document.getElementById('commentOverlay'),pin=document.getElementById('commentAddPin'),bubble=document.getElementById('capBubble');
-  overlay.addEventListener('mousemove',e=>{
+  // 1. Single-click on the timeline DATE AXIS (header SVG) opens comment dialog for that date
+  const headerEl=document.getElementById('chartHeader');
+  if(headerEl){
+    headerEl.addEventListener('click',e=>{
+      if(!currentMin)return;
+      // Don't fire if clicking on today-label text etc
+      const tag=e.target.tagName.toLowerCase();
+      if(tag==='button')return;
+      const rect=headerEl.getBoundingClientRect();
+      const x=e.clientX-rect.left+document.getElementById('chartBody').scrollLeft;
+      const date=isoFromDate(addDays(currentMin,Math.floor(x/getDayPx())));
+      openCommentModal(date);
+    });
+    headerEl.title='Click any date to add a timeline note';
+    headerEl.style.cursor='pointer';
+  }
+  // 2. Double-click on body SVG background opens comment for that date
+  const bodyEl=document.getElementById('chartBody');
+  if(!bodyEl)return;
+  bodyEl.addEventListener('dblclick',e=>{
     if(!currentMin)return;
-    const rect=overlay.getBoundingClientRect();const x=e.clientX-rect.left;
-    const scrollX=document.getElementById('chartBody').scrollLeft;
-    const totalX=x+scrollX;const dayPx=getDayPx();
-    const snapX=Math.floor(totalX/dayPx)*dayPx+dayPx/2;const visX=snapX-scrollX;
-    pin.style.display='block';pin.style.left=visX+'px';
-    const date=isoFromDate(addDays(currentMin,Math.floor(totalX/dayPx)));
-    const proj=getProject();const hasComment=proj&&(proj.comments||[]).some(c=>c.date===date);
-    bubble.textContent=hasComment?'💬':'+';bubble.style.background=hasComment?COLORS.ink2:COLORS.accent;
-  });
-  overlay.addEventListener('mouseleave',()=>{pin.style.display='none';});
-  overlay.addEventListener('click',e=>{
-    if(!currentMin)return;
-    const rect=overlay.getBoundingClientRect();const x=e.clientX-rect.left;
-    const scrollX=document.getElementById('chartBody').scrollLeft;
-    const date=isoFromDate(addDays(currentMin,Math.floor((x+scrollX)/getDayPx())));
+    if(e.target.closest('.chart-bar')||e.target.closest('.comment-marker'))return;
+    const tag=e.target.tagName.toLowerCase();
+    if(tag!=='svg'&&tag!=='rect')return;
+    const rect=bodyEl.getBoundingClientRect();
+    const x=e.clientX-rect.left+bodyEl.scrollLeft;
+    const date=isoFromDate(addDays(currentMin,Math.floor(x/getDayPx())));
     openCommentModal(date);
   });
 }
 function openCommentModal(date){currentCommentDate=date;const d=parseDate(date);document.getElementById('cModalDateLabel').textContent=d?fmtDateLong(d):'Unknown date';document.getElementById('cText').value='';document.getElementById('cAuthor').value='';renderCommentThread(date);document.getElementById('commentModal').classList.add('open');setTimeout(()=>document.getElementById('cText').focus(),80);}
 function closeCommentModal(){document.getElementById('commentModal').classList.remove('open');currentCommentDate=null;}
 function renderCommentThread(date){
-  const proj=getProject(),cmts=(proj?.comments||[]).filter(c=>c.date===date);
+  const proj=getProject();
+  const cmts=[...(proj?.comments||[]).filter(c=>c.date===date)].reverse(); // newest first
   const thread=document.getElementById('commentThread');thread.innerHTML='';
   if(!cmts.length){thread.innerHTML='<div class="comment-empty-msg">No notes for this date yet. Add one below.</div>';return;}
-  cmts.forEach(c=>{const item=document.createElement('div');item.className='comment-item';item.innerHTML=`<div class="ci-header"><span class="ci-dot" style="background:${c.color||'#3B82F6'}"></span><span class="ci-author">${escapeHtml(c.author||'Anonymous')}</span><span class="ci-date">${fmtDate(parseDate(c.date))}</span><button class="btn btn-danger ci-delete" data-id="${c.id}">×</button></div><div class="ci-text">${escapeHtml(c.text)}</div>`;thread.appendChild(item);});
-  thread.querySelectorAll('.ci-delete').forEach(btn=>{btn.onclick=()=>{const proj=getProject();if(!proj)return;pushUndo();proj.comments=proj.comments.filter(c=>c.id!==btn.dataset.id);saveState();renderCommentThread(date);renderChart();renderToolbar();};});
+  cmts.forEach(c=>{
+    const item=document.createElement('div');item.className='comment-item';
+    const dt=c.createdAt?new Date(c.createdAt):null;
+    const timeStr=dt?dt.toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'';
+    const editedStr=c.editedAt?` <span style="font-size:9px;color:var(--ink-4)">(edited)</span>`:'';
+    item.innerHTML=`
+      <div class="ci-header">
+        <span class="ci-dot" style="background:${c.color||'#ef4444'}"></span>
+        <span class="ci-author">${escapeHtml(c.author||'Anonymous')}</span>
+        <span class="ci-date">${timeStr}${editedStr}</span>
+        <button class="btn ci-delete" data-id="${c.id}" style="margin-left:auto;padding:2px 7px;font-size:11px">×</button>
+      </div>
+      <div class="ci-text" id="cmt-text-${c.id}">${escapeHtml(c.text)}</div>
+      <div style="display:flex;gap:6px;margin-top:4px">
+        <button class="btn" style="font-size:10px;padding:2px 8px" onclick="_editComment('${date}','${c.id}')">Edit</button>
+      </div>`;
+    thread.appendChild(item);
+  });
+  thread.querySelectorAll('.ci-delete').forEach(btn=>{
+    btn.onclick=()=>{
+      const proj=getProject();if(!proj)return;
+      pushUndo();proj.comments=proj.comments.filter(c=>c.id!==btn.dataset.id);
+      saveState();renderCommentThread(date);renderChart();renderToolbar();
+    };
+  });
+}
+function _editComment(date,commentId){
+  const proj=getProject();if(!proj)return;
+  const c=proj.comments.find(x=>x.id===commentId);if(!c)return;
+  const newText=prompt('Edit comment:',c.text);
+  if(newText===null)return;
+  pushUndo();c.text=newText.trim();c.editedAt=new Date().toISOString();
+  saveState();renderCommentThread(date);renderChart();
 }
 function saveComment(){const text=document.getElementById('cText').value.trim();if(!text)return;pushUndo();const proj=getProject();if(!proj)return;if(!proj.comments)proj.comments=[];const color=COMMENT_COLORS[proj.comments.length%COMMENT_COLORS.length];proj.comments.push({id:uid('cmt'),date:currentCommentDate,text,author:document.getElementById('cAuthor').value.trim(),color,createdAt:new Date().toISOString()});document.getElementById('cText').value='';document.getElementById('cAuthor').value='';saveState();renderCommentThread(currentCommentDate);renderChart();renderToolbar();}
 
@@ -3917,7 +4415,7 @@ async function init(){
   document.getElementById('saveTaskBtn').onclick=saveTaskFromModal;
   document.getElementById('cancelTaskBtn').onclick=closeTaskModal;
   document.getElementById('deleteTaskBtn').onclick=deleteTaskFromModal;
-  document.getElementById('commentTaskBtn').onclick=()=>{closeTaskModal();if(editingTaskId)openTaskComments(editingTaskId);};
+  document.getElementById('commentTaskBtn').onclick=()=>{if(editingTaskId)openTaskComments(editingTaskId);};
   document.getElementById('taskModal').addEventListener('click',e=>{if(e.target.id==='taskModal')closeTaskModal();});
   document.getElementById('f-progress').oninput=e=>{document.getElementById('f-progress-pct').textContent=e.target.value+'%';};
   document.getElementById('f-milestone').onchange=e=>toggleMilestoneUI(e.target.checked);
@@ -4438,311 +4936,11 @@ function showToast(msg, duration) {
   t._timer = setTimeout(() => { t.style.opacity = '0'; }, duration);
 }
 
-</script>
 
-<div class="modal-overlay" id="globalResOverlay" style="display:none">
-  <div class="modal" style="width:500px">
-    <div class="modal-header">🌐 Global Resource Pool
-      <button class="icon-btn" onclick="closeGlobalResources()">✕</button>
-    </div>
-    <div class="modal-body">
-      <p style="font-size:12px;color:var(--ink-3);margin-bottom:10px">Shared across all projects. Name / h/day / ₹/hr</p>
-      <div id="globalResList" style="display:grid;gap:4px;margin-bottom:10px"></div>
-      <button class="btn" onclick="(()=>{const id=Math.random().toString(36).slice(2);state.globalResources.push({id,name:'New Resource',hrsPerDay:8,costPerHr:0,color:'#0369a1',availableFrom:null,availableTo:null});renderGlobalResList();})()">+ Add Resource</button>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-primary" onclick="saveGlobalResources()">Save & Close</button>
-      <button class="btn" onclick="closeGlobalResources()">Cancel</button>
-    </div>
-  </div>
-</div>
-<div class="modal-overlay" id="macroOverlay" style="display:none">
-  <div class="modal" style="width:580px">
-    <div class="modal-header">⚡ Macros / Scripts
-      <button class="icon-btn" onclick="closeMacroEditor()">✕</button>
-    </div>
-    <div class="modal-body">
-      <p style="font-size:12px;color:var(--ink-3);margin-bottom:8px">API: <code style="font-family:var(--font-mono);font-size:11px">project, tasks, addTask(f), updateTask(id,f), deleteTask(id), log(msg)</code></p>
-      <div id="macroList" style="margin-bottom:8px"></div>
-      <textarea class="macro-editor" id="macroCode" placeholder="// Mark all tasks done&#10;tasks.forEach(t => updateTask(t.id, {status:'done'}));"></textarea>
-      <div class="macro-output" id="macroOutput"></div>
-      <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
-        <button class="btn btn-primary" onclick="runMacro()">▶ Run</button>
-        <button class="btn" onclick="saveMacro()">💾 Save</button>
-        <input id="macroName" placeholder="Macro name…" style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:4px;font:inherit;font-size:12px;background:var(--paper-tint)">
-      </div>
-    </div>
-  </div>
-</div>
+// ══════════════════════════════════════════════════════════════
+// MODULE: ADVANCED VIEWS — Roadmap, Dashboard, Reports, Scenarios
+// ══════════════════════════════════════════════════════════════
 
-<div class="modal-overlay" id="baselineOverlay" style="display:none">
-  <div class="modal modal-lg">
-    <div class="modal-header">📊 Baseline Manager
-      <button class="icon-btn" onclick="closeBaselineManager()">✕</button>
-    </div>
-    <div class="modal-body modal-body-scroll">
-      <p style="font-size:12px;color:var(--ink-3);margin-bottom:12px">Save up to 5 baseline snapshots. Apply any to Tracking Gantt to see schedule drift.</p>
-      <div id="baselineList" style="margin-bottom:12px"></div>
-      <div style="display:flex;gap:8px">
-        <input id="baselineName" placeholder="Name e.g. Sprint 1" style="flex:1;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font:inherit;font-size:12px;background:var(--card);color:var(--ink)">
-        <button class="btn btn-primary" onclick="saveNamedBaseline(document.getElementById('baselineName').value||undefined);document.getElementById('baselineName').value='';renderBaselineList()">+ Save Baseline</button>
-      </div>
-    </div>
-    <div class="modal-footer"><button class="btn" onclick="closeBaselineManager()">Close</button></div>
-  </div>
-</div>
-<!-- NON-WORKING DAYS MODAL -->
-<div class="modal-overlay" id="nonWorkingOverlay" style="display:none">
-  <div class="modal modal-lg">
-    <div class="modal-header"><span>Non-working Days</span><span class="meta">Holidays · weekends · project calendar</span>
-      <button class="icon-btn" onclick="closeNonWorkingDaysModal()">✕</button>
-    </div>
-    <div class="modal-body modal-body-scroll">
-      <div id="nwdList" style="margin-bottom:12px"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end;margin-top:8px">
-        <div><label style="font-size:11px;font-weight:600;color:var(--ink-3);display:block;margin-bottom:3px">Date</label><input type="date" id="nwdDate" style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:5px;font:inherit;font-size:12px"></div>
-        <div><label style="font-size:11px;font-weight:600;color:var(--ink-3);display:block;margin-bottom:3px">Reason / Holiday name</label><input id="nwdReason" placeholder="Diwali, Christmas…" style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:5px;font:inherit;font-size:12px"></div>
-        <button class="btn btn-primary" style="white-space:nowrap" onclick="addNonWorkingDay()">Add</button>
-      </div>
-      <div style="font-size:11px;color:var(--ink-4);margin-top:8px">These dates are skipped when calculating working days and scheduling. The scheduling engine will not place task work on these days.</div>
-    </div>
-    <div class="modal-footer"><div></div><div class="modal-footer-right"><button class="btn btn-primary" onclick="closeNonWorkingDaysModal()">Done</button></div></div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="leaveOverlay" style="display:none">
-  <div class="modal modal-lg">
-    <div class="modal-header"><span id="leaveResName">Leave Calendar</span>
-      <button class="icon-btn" onclick="closeLeaveCalendar()">✕</button>
-    </div>
-    <div class="modal-body modal-body-scroll">
-      <input type="hidden" id="leaveResId">
-      <div id="leaveList" style="margin-bottom:12px"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;align-items:end">
-        <div><label style="font-size:11px;font-weight:600;color:var(--ink-3);display:block;margin-bottom:3px">From</label><input type="date" id="leaveFrom" style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:5px;font:inherit;font-size:12px"></div>
-        <div><label style="font-size:11px;font-weight:600;color:var(--ink-3);display:block;margin-bottom:3px">To</label><input type="date" id="leaveTo" style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:5px;font:inherit;font-size:12px"></div>
-        <div><label style="font-size:11px;font-weight:600;color:var(--ink-3);display:block;margin-bottom:3px">Reason</label><input id="leaveReason" placeholder="Vacation…" style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:5px;font:inherit;font-size:12px"></div>
-        <button class="btn btn-primary" style="white-space:nowrap" onclick="(()=>{const rid=document.getElementById('leaveResId').value;const f=document.getElementById('leaveFrom').value;const t=document.getElementById('leaveTo').value;const r=document.getElementById('leaveReason').value;if(!f||!t)return alert('Pick dates');addResourceLeave(rid,f,t,r);renderLeaveList(rid);})()">Add</button>
-      </div>
-    </div>
-    <div class="modal-footer"><button class="btn" onclick="closeLeaveCalendar()">Done</button></div>
-  </div>
-</div>
-<div class="modal-overlay" id="taskCommentsOverlay" style="display:none">
-  <div class="modal modal-lg">
-    <div class="modal-header"><span id="tcTitle">💬 Comments</span>
-      <button class="icon-btn" onclick="closeTaskComments()">✕</button>
-    </div>
-    <div class="modal-body">
-      <input type="hidden" id="tcTaskId">
-      <div class="tc-thread" id="tcThread"></div>
-      <div class="tc-input-row">
-        <div style="display:grid;grid-template-columns:1fr 110px;gap:8px">
-          <input id="tcAuthor" placeholder="Your name" value="PM">
-          <select id="tcType"><option value="">General</option><option>Decision</option><option>Blocker</option><option>Update</option><option>Risk</option></select>
-        </div>
-        <textarea id="tcInput" placeholder="Add a comment… (Ctrl+Enter to post)"></textarea>
-        <div style="display:flex;gap:8px">
-          <button class="btn btn-primary" onclick="saveTaskComment()">💬 Post</button>
-          <button class="btn" onclick="closeTaskComments()">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="modal-overlay" id="reportsOverlay" style="display:none">
-  <div class="modal modal-xl" style="width:780px;max-width:96vw">
-    <div class="modal-header">📈 Enhanced Reports
-      <button class="icon-btn" onclick="closeReportsPanel()">✕</button>
-    </div>
-    <div class="modal-body modal-body-scroll">
-      <div class="report-tabs">
-        <div class="report-tab active" onclick="switchReportTab(this,'rSlipping')">🔴 Slipping</div>
-        <div class="report-tab" onclick="switchReportTab(this,'rOveralloc')">⚡ Overalloc</div>
-        <div class="report-tab" onclick="switchReportTab(this,'rMilestones')">◆ Milestones</div>
-        <div class="report-tab" onclick="switchReportTab(this,'rDeps')">🔗 Dep Health</div>
-        <div class="report-tab" onclick="switchReportTab(this,'rCrossProject')">🌐 Cross-Project</div>
-        <div class="report-tab" onclick="switchReportTab(this,'rSummary')">📊 Summary</div>
-      </div>
-      <div class="report-section active" id="rSlipping">
-        <p style="font-size:12px;color:var(--ink-3);margin-bottom:10px">Tasks where current end exceeds baseline end. Click a row to open the task.</p>
-        <div id="slippingReport"></div>
-      </div>
-      <div class="report-section" id="rOveralloc">
-        <p style="font-size:12px;color:var(--ink-3);margin-bottom:10px">Resource utilisation across the project timeline.</p>
-        <div id="overallocReport"></div>
-      </div>
-      <div class="report-section" id="rMilestones">
-        <p style="font-size:12px;color:var(--ink-3);margin-bottom:10px">All milestones across every project — status, dates, and owner.</p>
-        <div id="milestoneReport"></div>
-      </div>
-      <div class="report-section" id="rDeps">
-        <p style="font-size:12px;color:var(--ink-3);margin-bottom:10px">Dependency chain health — detect circular deps, violated constraints, and cascading delays.</p>
-        <div id="depsReport"></div>
-      </div>
-      <div class="report-section" id="rCrossProject">
-        <p style="font-size:12px;color:var(--ink-3);margin-bottom:10px">Portfolio view — all projects, overall health scores, and cross-project risk flags.</p>
-        <div id="crossProjectReport"></div>
-      </div>
-      <div class="report-section" id="rSummary"><div id="velocityReport"></div></div>
-    </div>
-    <div class="modal-footer"><button class="btn btn-primary" onclick="exportReportCSV()">⬇ Export CSV</button><button class="btn" onclick="closeReportsPanel()">Close</button></div>
-  </div>
-</div>
-<button class="tutorial-btn" onclick="openTutorial()" title="Tutorial — How to use">?</button>
-<div class="tutorial-overlay" id="tutorialOverlay">
-  <div class="tutorial-card">
-    <div class="tutorial-header">
-      <h2 id="tutTitle"></h2><p id="tutSub"></p>
-      <div class="tutorial-progress" id="tutDots"></div>
-    </div>
-    <div class="tutorial-body" id="tutBody"></div>
-    <div class="tutorial-footer">
-      <button class="btn" id="tutPrev" onclick="tutNav(-1)">← Back</button>
-      <span id="tutCtr" style="flex:1;text-align:center;font-size:11px;color:var(--ink-4);font-family:var(--font-mono)"></span>
-      <button class="btn btn-primary" id="tutNext" onclick="tutNav(1)">Next →</button>
-    </div>
-  </div>
-</div>
-<div class="modal-overlay" id="scnOverlay" style="display:none">
-  <div class="modal scn-overlay-modal">
-    <div class="modal-header">🔀 What-If Scenarios
-      <button style="background:transparent;border:none;font-size:18px;cursor:pointer;color:var(--ink-3);" onclick="closeScenarioMgr()">✕</button>
-    </div>
-    <div class="modal-body" style="padding:18px 22px">
-      <p style="font-size:12px;color:var(--ink-3);margin-bottom:12px;font-family:'Caladea','Cambria',Georgia,serif;">Create a scenario to explore date/resource changes without touching your live plan. Compare results, then apply or discard.</p>
-      <div class="scn-list" id="scnList"></div>
-      <div style="border-top:1px solid var(--border-soft);padding-top:12px;">
-        <div style="font-size:10px;font-family:'Space Mono',monospace;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);font-weight:700;margin-bottom:8px;">Create new scenario</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
-          <input id="scnNewName" placeholder="Name (e.g. Optimistic, Delayed…)" style="padding:8px 10px;border:1px solid var(--border);border-radius:6px;font:inherit;font-size:13px;background:var(--card);color:var(--ink);">
-          <input id="scnNewNote" placeholder="Note (optional)" style="padding:8px 10px;border:1px solid var(--border);border-radius:6px;font:inherit;font-size:12px;background:var(--card);color:var(--ink);">
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-          <span style="font-size:11px;color:var(--ink-3);font-family:'Space Mono',monospace;">Colour:</span>
-          <div class="scn-color-row" id="scnColorRow">
-            <span class="scn-color-swatch sel" data-c="#7c3aed" style="background:#7c3aed"></span>
-            <span class="scn-color-swatch" data-c="#0369a1" style="background:#0369a1"></span>
-            <span class="scn-color-swatch" data-c="#16a34a" style="background:#16a34a"></span>
-            <span class="scn-color-swatch" data-c="#ea580c" style="background:#ea580c"></span>
-            <span class="scn-color-swatch" data-c="#dc2626" style="background:#dc2626"></span>
-            <span class="scn-color-swatch" data-c="#be185d" style="background:#be185d"></span>
-            <span class="scn-color-swatch" data-c="#0d9488" style="background:#0d9488"></span>
-          </div>
-        </div>
-        <button class="btn btn-primary" onclick="createScenario()" style="font-size:12px;">+ Create from current plan</button>
-      </div>
-      <div id="scnCompareWrap" style="display:none" class="scn-compare">
-        <div class="scn-compare-hdr">📊 Comparison — live vs scenarios</div>
-        <div class="scn-cards" id="scnCompareCards"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════ -->
-<!--  PROJECT TRACKER PRO v6 — ADVANCED FEATURE ENGINE         -->
-<!--  1. Advanced Roadmap (cross-project, Q-zoom, milestones)  -->
-<!--  2. Analytics Dashboard (KPIs, charts, heatmap)           -->
-<!--  3. Enhanced Reports (milestones, dep health, portfolio)  -->
-<!--  4. Dependency & Milestone Management (inline upgrades)   -->
-<!-- ═══════════════════════════════════════════════════════════ -->
-<style>
-/* ── ROADMAP ─────────────────────────────────────────────────── */
-.rm-shell{display:flex;flex-direction:column;height:100%;background:var(--card);overflow:hidden;}
-.rm-header{padding:10px 16px;border-bottom:1px solid var(--border-soft);display:flex;align-items:center;justify-content:space-between;background:var(--paper-tint);flex-shrink:0;gap:10px;}
-.rm-label{font-family:var(--font-display);font-weight:800;font-size:15px;color:var(--ink);letter-spacing:-.02em;}
-.rm-subtitle{font-family:var(--font-mono);font-size:9px;color:var(--ink-4);text-transform:uppercase;letter-spacing:.08em;margin-left:8px;}
-.rm-controls{display:flex;align-items:center;gap:8px;flex-shrink:0;}
-.rm-filter-group{display:flex;background:var(--paper-tint);border:1px solid var(--border-soft);border-radius:6px;padding:2px;gap:1px;}
-.rm-filter-btn{background:transparent;border:none;padding:4px 9px;font:inherit;font-family:var(--font-mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;border-radius:4px;color:var(--ink-3);}
-.rm-filter-btn.active,.rm-filter-btn:hover{background:var(--accent);color:#fff;}
-/* Body: left pane + chart side by side, both scroll together */
-.rm-body{display:grid;grid-template-columns:220px 1fr;flex:1;overflow:hidden;min-height:0;}
-/* Left pane: no independent scroll — it's a pixel-perfect mirror of SVG rows */
-.rm-left-pane{border-right:1px solid var(--border-soft);overflow:hidden;background:var(--card);display:flex;flex-direction:column;}
-.rm-left-header{height:52px;background:var(--paper-tint);border-bottom:1px solid var(--border-soft);display:flex;align-items:flex-end;padding:0 14px 8px;font-family:var(--font-mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-4);flex-shrink:0;}
-.rm-left-scroll{flex:1;overflow-y:hidden;position:relative;}
-.rm-left-inner{position:absolute;top:0;left:0;right:0;}
-.rm-chart-area{display:flex;flex-direction:column;overflow:hidden;min-width:0;}
-.rm-chart-header{height:52px;background:var(--paper-tint);border-bottom:1px solid var(--border-soft);overflow:hidden;flex-shrink:0;position:relative;}
-.rm-chart-header svg{position:absolute;top:0;left:0;}
-.rm-chart-scroll{flex:1;overflow:auto;background:var(--card);position:relative;}
-.rm-chart-scroll svg{display:block;}
-.rm-legend{border-top:1px solid var(--border-soft);padding:6px 16px;display:flex;gap:12px;align-items:center;background:var(--paper-tint);flex-shrink:0;flex-wrap:wrap;min-height:34px;}
-.rm-legend-item{display:flex;align-items:center;gap:5px;font-family:var(--font-mono);font-size:10px;color:var(--ink-3);font-weight:600;}
-.rm-legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
-/* Left pane rows — FIXED heights matching SVG row heights exactly */
-.rm-proj-header{height:36px;box-sizing:border-box;padding:0 12px 0 10px;background:rgba(3,105,161,.04);border-bottom:1px solid var(--border-soft);display:flex;align-items:center;gap:7px;cursor:pointer;user-select:none;border-left:3px solid transparent;flex-shrink:0;}
-.rm-proj-header:hover{background:rgba(3,105,161,.09);}
-.rm-proj-name{font-family:var(--font-display);font-weight:700;font-size:12px;color:var(--ink);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.rm-proj-badge{font-family:var(--font-mono);font-size:9px;padding:1px 6px;border-radius:9px;font-weight:700;flex-shrink:0;}
-.rm-task-row{height:32px;box-sizing:border-box;padding:0 12px 0 22px;display:flex;align-items:center;gap:7px;border-bottom:1px solid var(--border-soft);cursor:pointer;flex-shrink:0;}
-.rm-task-row:hover{background:var(--hover);}
-.rm-spacer-row{flex-shrink:0;}
-.rm-task-name{font-size:11px;color:var(--ink);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:var(--font-display);}
-.rm-task-name.milestone{color:var(--accent);font-style:italic;font-weight:600;}
-.rm-task-meta{font-family:var(--font-mono);font-size:9px;color:var(--ink-4);flex-shrink:0;white-space:nowrap;}
-/* ── DASHBOARD ────────────────────────────────────────────────── */
-.dash-shell{display:flex;flex-direction:column;height:100%;background:var(--paper);overflow:hidden;}
-.dash-header{padding:14px 22px;border-bottom:1px solid var(--border-soft);background:var(--card);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-.dash-title{font-family:var(--font-display);font-weight:800;font-size:17px;color:var(--ink);letter-spacing:-.02em;}
-.dash-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:16px 20px;overflow-y:auto;flex:1;}
-.dash-bottom{padding:0 20px 16px;display:grid;grid-template-columns:1fr 1fr;gap:14px;flex-shrink:0;}
-.dash-card{background:var(--card);border:1px solid var(--border-soft);border-radius:10px;padding:16px 18px;position:relative;overflow:hidden;}
-.dash-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--dash-accent,var(--accent));}
-.dash-kpi-num{font-family:var(--font-mono);font-size:32px;font-weight:800;line-height:1;color:var(--ink);letter-spacing:-.04em;}
-.dash-kpi-lbl{font-family:var(--font-mono);font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-4);font-weight:700;margin-top:5px;}
-.dash-kpi-sub{font-size:11px;color:var(--ink-3);margin-top:4px;}
-.dash-kpi-trend{font-family:var(--font-mono);font-size:10px;font-weight:700;margin-top:6px;display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:10px;}
-.trend-up{background:rgba(22,163,74,.1);color:#16a34a;}
-.trend-down{background:rgba(220,38,38,.1);color:#dc2626;}
-.trend-flat{background:rgba(100,116,139,.1);color:#64748b;}
-.dash-chart-card{background:var(--card);border:1px solid var(--border-soft);border-radius:10px;padding:16px 18px;}
-.dash-chart-title{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-3);font-weight:700;margin-bottom:12px;}
-.dash-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
-.dash-bar-label{font-size:11px;color:var(--ink-2);width:80px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.dash-bar-track{flex:1;height:10px;background:var(--border-soft);border-radius:5px;overflow:hidden;}
-.dash-bar-fill{height:100%;border-radius:5px;transition:width .4s ease;}
-.dash-bar-val{font-family:var(--font-mono);font-size:10px;color:var(--ink-3);width:38px;text-align:right;flex-shrink:0;}
-.dash-heatmap-cell{border-radius:3px;cursor:pointer;transition:opacity .1s;}
-.dash-heatmap-cell:hover{opacity:.75;}
-.dash-status-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border-soft);}
-.dash-status-row:last-child{border-bottom:none;}
-.dash-status-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-.dash-proj-name{font-size:12px;font-weight:600;color:var(--ink);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.dash-proj-pct{font-family:var(--font-mono);font-size:11px;color:var(--ink-3);}
-/* ── MILESTONE PICKER in task modal ────────────────────────────── */
-.ms-date-row{display:flex;align-items:center;gap:8px;background:rgba(3,105,161,.05);border:1px solid rgba(3,105,161,.2);border-radius:6px;padding:8px 12px;margin-top:8px;}
-.ms-diamond{font-size:16px;color:var(--accent);}
-.ms-label{font-size:12px;font-weight:600;color:var(--ink-2);flex:1;}
-/* ── CROSS-PROJECT DEPS ─────────────────────────────────────────── */
-.xdep-row{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--paper-tint);border-radius:6px;margin-bottom:5px;border:1px solid var(--border-soft);}
-.xdep-from{font-family:var(--font-mono);font-size:10px;color:#0052cc;font-weight:700;}
-.xdep-arrow{color:var(--ink-4);font-size:12px;}
-.xdep-to{font-size:12px;color:var(--ink);flex:1;}
-.xdep-status{font-family:var(--font-mono);font-size:9px;padding:2px 7px;border-radius:10px;font-weight:700;}
-/* ── REPORT ENHANCEMENTS ─────────────────────────────────────────── */
-.rep-milestone-row{display:flex;align-items:center;gap:10px;padding:9px 12px;border-bottom:1px solid var(--border-soft);cursor:pointer;}
-.rep-milestone-row:hover{background:var(--hover);}
-.rep-milestone-diamond{font-size:14px;flex-shrink:0;}
-.rep-ms-proj{font-family:var(--font-mono);font-size:9px;color:var(--ink-4);font-weight:700;}
-.rep-ms-name{font-size:13px;font-weight:600;color:var(--ink);flex:1;}
-.rep-ms-date{font-family:var(--font-mono);font-size:11px;color:var(--ink-3);}
-.rep-health-score{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:14px;font-weight:800;flex-shrink:0;border:2.5px solid;}
-.portfolio-row{padding:12px 14px;border-bottom:1px solid var(--border-soft);display:flex;align-items:center;gap:12px;cursor:pointer;}
-.portfolio-row:hover{background:var(--hover);}
-.portfolio-proj-name{font-family:var(--font-display);font-weight:700;font-size:13px;flex:1;}
-.portfolio-bar-wrap{width:120px;height:8px;background:var(--border-soft);border-radius:4px;overflow:hidden;}
-.portfolio-bar{height:100%;border-radius:4px;}
-.dep-health-item{padding:10px 14px;border-bottom:1px solid var(--border-soft);}
-.dep-health-tag{font-family:var(--font-mono);font-size:9px;font-weight:700;padding:1px 7px;border-radius:10px;margin-right:6px;}
-.dep-ok{background:rgba(22,163,74,.1);color:#16a34a;border:1px solid rgba(22,163,74,.3);}
-.dep-warn{background:rgba(217,119,6,.1);color:#d97706;border:1px solid rgba(217,119,6,.3);}
-.dep-err{background:rgba(220,38,38,.1);color:#dc2626;border:1px solid rgba(220,38,38,.3);}
-</style>
-
-<script>
 // ════════════════════════════════════════════════════════════════
 // FEATURE 1 — ADVANCED ROADMAP VIEW
 // Cross-project · quarter zoom · milestone swim lanes
@@ -6151,114 +6349,358 @@ migrateProject = function(p) {
   return p;
 };
 
-// ── Non-working-days aware workingDaysBetween (override) ─────────
-// Only applies when a project context is available
+// ── Non-working-days aware workingDaysBetween ────────────────────
+// Wraps the base calculation with project calendar awareness.
+// Uses workingDaysBetweenP when project has custom non-working days.
+// Safe: no function reassignment — original renamed to _workingDaysBetweenBase.
 const _origWorkingDaysBetween = workingDaysBetween;
-workingDaysBetween = function(s, e) {
+function workingDaysBetween(s, e) {
   const p = getProject();
-  if (!p || !(p.nonWorkingDays && p.nonWorkingDays.length) && !(p.workWeekend && (p.workWeekend.sat || p.workWeekend.sun))) {
+  if (!p || (!(p.nonWorkingDays && p.nonWorkingDays.length) && !(p.workWeekend && (p.workWeekend.sat || p.workWeekend.sun)))) {
     return _origWorkingDaysBetween(s, e);
   }
   return workingDaysBetweenP(p, s, e);
-};
+}
 
 
 // Warns in console if critical architecture is broken.
 // ═══════════════════════════════════════════════════════════════
 (function _integrityCheck(){
+  // ═══════════════════════════════════════════════════════════════
+  // FEATURE LOCK v1.1 — Phase 3 Stabilization
+  // These checks run at startup and confirm every stable module
+  // is present and has its correct interface.
+  // Adding new features must NOT break any of these checks.
+  // ═══════════════════════════════════════════════════════════════
   const checks = [
-    // [F01] rowY array passed to drawBar
-    { id:'F01', name:'rowY/rowH row alignment', test: ()=> typeof drawBar === 'function' && drawBar.toString().includes('rowY&&rowY[i]') },
-    // [F03] Dep arrow uses pRY not i*ROW_H  
-    { id:'F03', name:'Dep arrow real coords', test: ()=> typeof drawDepArrow === 'function' && drawDepArrow.toString().includes('pRY=(rowY') },
-    // [F08] _rmDrawCrossProjectDeps defined
-    { id:'F08', name:'_rmDrawCrossProjectDeps defined', test: ()=> typeof _rmDrawCrossProjectDeps === 'function' },
-    // [F10] drag handle working (onHandleDragStart defined)
-    { id:'F10', name:'Drag-to-reorder functions', test: ()=> typeof onHandleDragStart === 'function' && typeof onRowDrop === 'function' },
-    // Core engine intact
-    { id:'CORE', name:'renderChart defined', test: ()=> typeof renderChart === 'function' },
-    { id:'CORE', name:'autoScheduleCascade defined', test: ()=> typeof autoScheduleCascade === 'function' },
-    { id:'CORE', name:'calcCriticalPath defined', test: ()=> typeof calcCriticalPath === 'function' },
-    { id:'CORE', name:'renderRoadmap defined', test: ()=> typeof renderRoadmap === 'function' },
+    // ── MODULE: RENDERING ────────────────────────────────────────
+    { id:'F01', name:'drawBar uses rowY/rowH geometry', test: ()=>
+        typeof drawBar==='function' && drawBar.toString().includes('rowY&&rowY[i]') },
+    { id:'F02', name:'drawSummaryBar uses rowY/rowH geometry', test: ()=>
+        typeof drawSummaryBar==='function' && drawSummaryBar.toString().includes('rowY&&rowY[i]') },
+    { id:'F03', name:'drawDepArrow uses rendered row coords', test: ()=>
+        typeof drawDepArrow==='function' && drawDepArrow.toString().includes('pRY=(rowY') },
+    { id:'F04', name:'drawDepArrow accepts pre-built childrenOf', test: ()=>
+        typeof drawDepArrow==='function' && drawDepArrow.toString().includes('childrenOf,byId2)') },
+    { id:'F05', name:'routeConnector defined (shared routing engine)', test: ()=>
+        typeof drawDepArrow==='function' && drawDepArrow.toString().includes('function routeConnector(') },
+    { id:'F06', name:'pts2path converts waypoints to SVG d attribute', test: ()=>
+        typeof drawDepArrow==='function' && drawDepArrow.toString().includes('pts2path(result.pts)') },
+    // ── MODULE: SCHEDULING ───────────────────────────────────────
+    { id:'S01', name:'autoScheduleCascade defined', test: ()=> typeof autoScheduleCascade==='function' },
+    { id:'S02', name:'calcCriticalPath defined', test: ()=> typeof calcCriticalPath==='function' },
+    { id:'S03', name:'workingDaysBetween defined', test: ()=> typeof workingDaysBetween==='function' },
+    { id:'S04', name:'effectiveDates defined', test: ()=> typeof effectiveDates==='function' },
+    // ── MODULE: STATE ────────────────────────────────────────────
+    { id:'ST1', name:'saveState defined', test: ()=> typeof saveState==='function' },
+    { id:'ST2', name:'loadState defined', test: ()=> typeof loadState==='function' },
+    { id:'ST3', name:'pushUndo defined', test: ()=> typeof pushUndo==='function' },
+    { id:'ST4', name:'renderAll defined', test: ()=> typeof renderAll==='function' },
+    // ── MODULE: MIGRATION ────────────────────────────────────────
+    { id:'M01', name:'migrateTask defined', test: ()=> typeof migrateTask==='function' },
+    { id:'M02', name:'migrateProject defined', test: ()=> typeof migrateProject==='function' },
+    { id:'M03', name:'migrateTask sets taskType default', test: ()=>
+        typeof migrateTask==='function' && migrateTask.toString().includes("taskType??'fixed_units'") },
+    // ── MODULE: RESOURCE ─────────────────────────────────────────
+    { id:'R01', name:'computeEffort defined', test: ()=> typeof computeEffort==='function' },
+    { id:'R02', name:'levelResources defined', test: ()=> typeof levelResources==='function' },
+    { id:'R03', name:'getResource defined', test: ()=> typeof getResource==='function' },
+    // ── CORE VIEWS ───────────────────────────────────────────────
+    { id:'V01', name:'renderChart defined', test: ()=> typeof renderChart==='function' },
+    { id:'V02', name:'renderRoadmap defined', test: ()=> typeof renderRoadmap==='function' },
+    { id:'V03', name:'renderDashboard defined', test: ()=> typeof renderDashboard==='function' },
+    { id:'V04', name:'renderTeam defined', test: ()=> typeof renderTeam==='function' },
+    // ── LAYOUT LOCK ──────────────────────────────────────────────
+    { id:'F08', name:'_rmDrawCrossProjectDeps defined', test: ()=> typeof _rmDrawCrossProjectDeps==='function' },
+    { id:'F10', name:'Drag-to-reorder functions intact', test: ()=>
+        typeof onHandleDragStart==='function' && typeof onRowDrop==='function' },
+    { id:'F11', name:'renderChart passes taskRects+tree to routing engine', test: ()=>
+        typeof renderChart==='function' && renderChart.toString().includes('taskRects,childrenOf,byId)') },
   ];
-  let fail = 0;
-  checks.forEach(c => {
-    try {
-      if (!c.test()) { console.warn(`[PTP Integrity] FAIL [${c.id}]: ${c.name}`); fail++; }
-    } catch(e) { console.warn(`[PTP Integrity] ERROR [${c.id}]: ${c.name} —`, e.message); fail++; }
+  let fail=0;
+  checks.forEach(c=>{
+    try{
+      if(!c.test()){console.warn(`[PTP Lock] FAIL [${c.id}]: ${c.name}`);fail++;}
+    }catch(e){console.warn(`[PTP Lock] ERROR [${c.id}]: ${c.name} —`,e.message);fail++;}
   });
-  if (fail === 0) {
-    console.log('%c[PTP v1.0] ✓ All integrity checks pass (' + checks.length + '/' + checks.length + ')', 'color:#059669;font-weight:bold;font-family:monospace');
-  } else {
-    console.error('[PTP v1.0] ✗ ' + fail + ' integrity check(s) failed. Check LOCK GUARD notes in HTML comments.');
+  if(fail===0){
+    console.log('%c[PTP v1.1] ✓ Feature lock: all '+checks.length+' checks pass','color:#059669;font-weight:bold;font-family:monospace');
+  }else{
+    console.error('[PTP v1.1] ✗ '+fail+' feature lock check(s) failed. See LOCK GUARD notes in source.');
   }
 })();
 
 </script>
 
+<div class="modal-overlay" id="globalResOverlay" style="display:none">
+  <div class="modal" style="width:500px">
+    <div class="modal-header">🌐 Global Resource Pool
+      <button class="icon-btn" onclick="closeGlobalResources()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:12px;color:var(--ink-3);margin-bottom:10px">Shared across all projects. Name / h/day / ₹/hr</p>
+      <div id="globalResList" style="display:grid;gap:4px;margin-bottom:10px"></div>
+      <button class="btn" onclick="(()=>{const id=Math.random().toString(36).slice(2);state.globalResources.push({id,name:'New Resource',hrsPerDay:8,costPerHr:0,color:'#0369a1',availableFrom:null,availableTo:null});renderGlobalResList();})()">+ Add Resource</button>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="saveGlobalResources()">Save & Close</button>
+      <button class="btn" onclick="closeGlobalResources()">Cancel</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="macroOverlay" style="display:none">
+  <div class="modal" style="width:580px">
+    <div class="modal-header">⚡ Macros / Scripts
+      <button class="icon-btn" onclick="closeMacroEditor()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:12px;color:var(--ink-3);margin-bottom:8px">API: <code style="font-family:var(--font-mono);font-size:11px">project, tasks, addTask(f), updateTask(id,f), deleteTask(id), log(msg)</code></p>
+      <div id="macroList" style="margin-bottom:8px"></div>
+      <textarea class="macro-editor" id="macroCode" placeholder="// Mark all tasks done&#10;tasks.forEach(t => updateTask(t.id, {status:'done'}));"></textarea>
+      <div class="macro-output" id="macroOutput"></div>
+      <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+        <button class="btn btn-primary" onclick="runMacro()">▶ Run</button>
+        <button class="btn" onclick="saveMacro()">💾 Save</button>
+        <input id="macroName" placeholder="Macro name…" style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:4px;font:inherit;font-size:12px;background:var(--paper-tint)">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="baselineOverlay" style="display:none">
+  <div class="modal modal-lg">
+    <div class="modal-header">📊 Baseline Manager
+      <button class="icon-btn" onclick="closeBaselineManager()">✕</button>
+    </div>
+    <div class="modal-body modal-body-scroll">
+      <p style="font-size:12px;color:var(--ink-3);margin-bottom:12px">Save up to 5 baseline snapshots. Apply any to Tracking Gantt to see schedule drift.</p>
+      <div id="baselineList" style="margin-bottom:12px"></div>
+      <div style="display:flex;gap:8px">
+        <input id="baselineName" placeholder="Name e.g. Sprint 1" style="flex:1;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font:inherit;font-size:12px;background:var(--card);color:var(--ink)">
+        <button class="btn btn-primary" onclick="saveNamedBaseline(document.getElementById('baselineName').value||undefined);document.getElementById('baselineName').value='';renderBaselineList()">+ Save Baseline</button>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn" onclick="closeBaselineManager()">Close</button></div>
+  </div>
+</div>
+<!-- NON-WORKING DAYS MODAL -->
+<div class="modal-overlay" id="nonWorkingOverlay" style="display:none">
+  <div class="modal modal-lg">
+    <div class="modal-header"><span>Non-working Days</span><span class="meta">Holidays · weekends · project calendar</span>
+      <button class="icon-btn" onclick="closeNonWorkingDaysModal()">✕</button>
+    </div>
+    <div class="modal-body modal-body-scroll">
+      <div id="nwdList" style="margin-bottom:12px"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end;margin-top:8px">
+        <div><label style="font-size:11px;font-weight:600;color:var(--ink-3);display:block;margin-bottom:3px">Date</label><input type="date" id="nwdDate" style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:5px;font:inherit;font-size:12px"></div>
+        <div><label style="font-size:11px;font-weight:600;color:var(--ink-3);display:block;margin-bottom:3px">Reason / Holiday name</label><input id="nwdReason" placeholder="Diwali, Christmas…" style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:5px;font:inherit;font-size:12px"></div>
+        <button class="btn btn-primary" style="white-space:nowrap" onclick="addNonWorkingDay()">Add</button>
+      </div>
+      <div style="font-size:11px;color:var(--ink-4);margin-top:8px">These dates are skipped when calculating working days and scheduling. The scheduling engine will not place task work on these days.</div>
+    </div>
+    <div class="modal-footer"><div></div><div class="modal-footer-right"><button class="btn btn-primary" onclick="closeNonWorkingDaysModal()">Done</button></div></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="leaveOverlay" style="display:none">
+  <div class="modal modal-lg">
+    <div class="modal-header"><span id="leaveResName">Leave Calendar</span>
+      <button class="icon-btn" onclick="closeLeaveCalendar()">✕</button>
+    </div>
+    <div class="modal-body modal-body-scroll">
+      <input type="hidden" id="leaveResId">
+      <div id="leaveList" style="margin-bottom:12px"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;align-items:end">
+        <div><label style="font-size:11px;font-weight:600;color:var(--ink-3);display:block;margin-bottom:3px">From</label><input type="date" id="leaveFrom" style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:5px;font:inherit;font-size:12px"></div>
+        <div><label style="font-size:11px;font-weight:600;color:var(--ink-3);display:block;margin-bottom:3px">To</label><input type="date" id="leaveTo" style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:5px;font:inherit;font-size:12px"></div>
+        <div><label style="font-size:11px;font-weight:600;color:var(--ink-3);display:block;margin-bottom:3px">Reason</label><input id="leaveReason" placeholder="Vacation…" style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:5px;font:inherit;font-size:12px"></div>
+        <button class="btn btn-primary" style="white-space:nowrap" onclick="(()=>{const rid=document.getElementById('leaveResId').value;const f=document.getElementById('leaveFrom').value;const t=document.getElementById('leaveTo').value;const r=document.getElementById('leaveReason').value;if(!f||!t)return alert('Pick dates');addResourceLeave(rid,f,t,r);renderLeaveList(rid);})()">Add</button>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn" onclick="closeLeaveCalendar()">Done</button></div>
+  </div>
+</div>
+<div class="modal-overlay" id="taskCommentsOverlay" style="display:none">
+  <div class="modal modal-lg">
+    <div class="modal-header"><span id="tcTitle">💬 Comments</span>
+      <button class="icon-btn" onclick="closeTaskComments()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="tcTaskId">
+      <div class="tc-thread" id="tcThread"></div>
+      <div class="tc-input-row">
+        <div style="display:grid;grid-template-columns:1fr 110px;gap:8px">
+          <input id="tcAuthor" placeholder="Your name" value="PM">
+          <select id="tcType"><option value="">General</option><option>Decision</option><option>Blocker</option><option>Update</option><option>Risk</option></select>
+        </div>
+        <textarea id="tcInput" placeholder="Add a comment… (Ctrl+Enter to post)"></textarea>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary" onclick="saveTaskComment()">💬 Post</button>
+          <button class="btn" onclick="closeTaskComments()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="reportsOverlay" style="display:none">
+  <div class="modal modal-xl" style="width:780px;max-width:96vw">
+    <div class="modal-header">📈 Enhanced Reports
+      <button class="icon-btn" onclick="closeReportsPanel()">✕</button>
+    </div>
+    <div class="modal-body modal-body-scroll">
+      <div class="report-tabs">
+        <div class="report-tab active" onclick="switchReportTab(this,'rSlipping')">🔴 Slipping</div>
+        <div class="report-tab" onclick="switchReportTab(this,'rOveralloc')">⚡ Overalloc</div>
+        <div class="report-tab" onclick="switchReportTab(this,'rMilestones')">◆ Milestones</div>
+        <div class="report-tab" onclick="switchReportTab(this,'rDeps')">🔗 Dep Health</div>
+        <div class="report-tab" onclick="switchReportTab(this,'rCrossProject')">🌐 Cross-Project</div>
+        <div class="report-tab" onclick="switchReportTab(this,'rSummary')">📊 Summary</div>
+      </div>
+      <div class="report-section active" id="rSlipping">
+        <p style="font-size:12px;color:var(--ink-3);margin-bottom:10px">Tasks where current end exceeds baseline end. Click a row to open the task.</p>
+        <div id="slippingReport"></div>
+      </div>
+      <div class="report-section" id="rOveralloc">
+        <p style="font-size:12px;color:var(--ink-3);margin-bottom:10px">Resource utilisation across the project timeline.</p>
+        <div id="overallocReport"></div>
+      </div>
+      <div class="report-section" id="rMilestones">
+        <p style="font-size:12px;color:var(--ink-3);margin-bottom:10px">All milestones across every project — status, dates, and owner.</p>
+        <div id="milestoneReport"></div>
+      </div>
+      <div class="report-section" id="rDeps">
+        <p style="font-size:12px;color:var(--ink-3);margin-bottom:10px">Dependency chain health — detect circular deps, violated constraints, and cascading delays.</p>
+        <div id="depsReport"></div>
+      </div>
+      <div class="report-section" id="rCrossProject">
+        <p style="font-size:12px;color:var(--ink-3);margin-bottom:10px">Portfolio view — all projects, overall health scores, and cross-project risk flags.</p>
+        <div id="crossProjectReport"></div>
+      </div>
+      <div class="report-section" id="rSummary"><div id="velocityReport"></div></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-primary" onclick="exportReportCSV()">⬇ Export CSV</button><button class="btn" onclick="closeReportsPanel()">Close</button></div>
+  </div>
+</div>
+<button class="tutorial-btn" onclick="openTutorial()" title="Tutorial — How to use">?</button>
+<div class="tutorial-overlay" id="tutorialOverlay">
+  <div class="tutorial-card">
+    <div class="tutorial-header">
+      <h2 id="tutTitle"></h2><p id="tutSub"></p>
+      <div class="tutorial-progress" id="tutDots"></div>
+    </div>
+    <div class="tutorial-body" id="tutBody"></div>
+    <div class="tutorial-footer">
+      <button class="btn" id="tutPrev" onclick="tutNav(-1)">← Back</button>
+      <span id="tutCtr" style="flex:1;text-align:center;font-size:11px;color:var(--ink-4);font-family:var(--font-mono)"></span>
+      <button class="btn btn-primary" id="tutNext" onclick="tutNav(1)">Next →</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="scnOverlay" style="display:none">
+  <div class="modal scn-overlay-modal">
+    <div class="modal-header">🔀 What-If Scenarios
+      <button style="background:transparent;border:none;font-size:18px;cursor:pointer;color:var(--ink-3);" onclick="closeScenarioMgr()">✕</button>
+    </div>
+    <div class="modal-body" style="padding:18px 22px">
+      <p style="font-size:12px;color:var(--ink-3);margin-bottom:12px;font-family:'Caladea','Cambria',Georgia,serif;">Create a scenario to explore date/resource changes without touching your live plan. Compare results, then apply or discard.</p>
+      <div class="scn-list" id="scnList"></div>
+      <div style="border-top:1px solid var(--border-soft);padding-top:12px;">
+        <div style="font-size:10px;font-family:'Space Mono',monospace;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);font-weight:700;margin-bottom:8px;">Create new scenario</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+          <input id="scnNewName" placeholder="Name (e.g. Optimistic, Delayed…)" style="padding:8px 10px;border:1px solid var(--border);border-radius:6px;font:inherit;font-size:13px;background:var(--card);color:var(--ink);">
+          <input id="scnNewNote" placeholder="Note (optional)" style="padding:8px 10px;border:1px solid var(--border);border-radius:6px;font:inherit;font-size:12px;background:var(--card);color:var(--ink);">
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <span style="font-size:11px;color:var(--ink-3);font-family:'Space Mono',monospace;">Colour:</span>
+          <div class="scn-color-row" id="scnColorRow">
+            <span class="scn-color-swatch sel" data-c="#7c3aed" style="background:#7c3aed"></span>
+            <span class="scn-color-swatch" data-c="#0369a1" style="background:#0369a1"></span>
+            <span class="scn-color-swatch" data-c="#16a34a" style="background:#16a34a"></span>
+            <span class="scn-color-swatch" data-c="#ea580c" style="background:#ea580c"></span>
+            <span class="scn-color-swatch" data-c="#dc2626" style="background:#dc2626"></span>
+            <span class="scn-color-swatch" data-c="#be185d" style="background:#be185d"></span>
+            <span class="scn-color-swatch" data-c="#0d9488" style="background:#0d9488"></span>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="createScenario()" style="font-size:12px;">+ Create from current plan</button>
+      </div>
+      <div id="scnCompareWrap" style="display:none" class="scn-compare">
+        <div class="scn-compare-hdr">📊 Comparison — live vs scenarios</div>
+        <div class="scn-cards" id="scnCompareCards"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!--  PROJECT TRACKER PRO v6 — ADVANCED FEATURE ENGINE         -->
+<!--  1. Advanced Roadmap (cross-project, Q-zoom, milestones)  -->
+<!--  2. Analytics Dashboard (KPIs, charts, heatmap)           -->
+<!--  3. Enhanced Reports (milestones, dep health, portfolio)  -->
+<!--  4. Dependency & Milestone Management (inline upgrades)   -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+
+
 
 <!--
   ╔══════════════════════════════════════════════════════════════════╗
-  ║              DEVELOPER GUIDE — HOW TO ADD FEATURES              ║
+  ║           PROJECT TRACKER PRO — DEVELOPER GUIDE v1.1            ║
   ╠══════════════════════════════════════════════════════════════════╣
   ║                                                                  ║
-  ║  ADDING A NEW COLUMN TO THE TASK PANE:                           ║
-  ║  1. Update grid-template-columns in .tph-cols AND .task-row      ║
-  ║     (currently: var(--col-wbs,42px) var(--col-task,1fr)          ║
-  ║      var(--col-owner,100px) — add new var at end)                ║
-  ║  2. Add header <div> in #tphCols                                 ║
-  ║  3. Add cell <div> in row.innerHTML in renderTaskList()          ║
-  ║  4. DO NOT remove position:relative from .task-row               ║
+  ║  STABLE MODULES (Phase 3 Feature Lock)                          ║
+  ║  Do NOT modify the interface of these modules without updating  ║
+  ║  the integrity checks in _integrityCheck():                     ║
   ║                                                                  ║
-  ║  ADDING A NEW GANTT BAR ELEMENT:                                 ║
-  ║  1. Edit drawBar() or drawSummaryBar()                           ║
-  ║  2. Use _ry and _rh for Y coordinates — NOT i*ROW_H              ║
-  ║     _ry = (rowY&&rowY[i]!=null) ? rowY[i] : i*ROW_H             ║
-  ║     _rh = (rowH&&rowH[i]!=null) ? rowH[i] : ROW_H               ║
-  ║  3. barY = _ry + Math.round(_rh*.18)                             ║
-  ║  4. barH = _rh - Math.round(_rh*.36)                             ║
+  ║  RENDERING   drawBar, drawSummaryBar, drawMilestone             ║
+  ║  ROUTING     drawDepArrow → routeConnector → pts2path           ║
+  ║  SCHEDULING  autoScheduleCascade, calcCriticalPath              ║
+  ║  STATE       saveState, loadState, pushUndo, renderAll          ║
+  ║  MIGRATION   migrateTask, migrateProject                        ║
+  ║  RESOURCE    computeEffort, levelResources                      ║
   ║                                                                  ║
-  ║  ADDING A NEW VIEW:                                              ║
-  ║  1. Add data-view="myview" button in toolbar                     ║
-  ║  2. Add <div class="view-pane" id="myviewView"> in HTML          ║
-  ║  3. Add else if(view==='myview') branch in renderAll()           ║
-  ║  4. Add function renderMyView() {}                               ║
+  ╠══════════════════════════════════════════════════════════════════╣
   ║                                                                  ║
-  ║  ADDING A NEW THEME:                                             ║
-  ║  1. Add :root[data-theme="mytheme"]{...} CSS block               ║
-  ║  2. Add mytheme:{...} entry in THEME_COLORS JS object            ║
-  ║  3. Add <div class="theme-swatch" data-t="mytheme"> in HTML      ║
-  ║  4. Ensure --ink-3 has enough contrast vs --paper (min 4.5:1)    ║
+  ║  SAFE EXTENSION POINTS (add features here without risk)         ║
   ║                                                                  ║
-  ║  MODIFYING AUTO-SCHEDULE:                                        ║
-  ║  Function: autoScheduleCascade(p, changedTaskId)                 ║
-  ║  Called after: saveTaskFromModal(), bar drag mouseup             ║
-  ║  Only runs when state.autoSchedule === true                      ║
-  ║  BFS forward-only. To add lag: modify newStart calc per type     ║
+  ║  NEW VIEW:                                                       ║
+  ║  1. Add data-view="myview" button in toolbar                    ║
+  ║  2. Add <div class="view-pane" id="myviewView"> in HTML         ║
+  ║  3. Add branch in renderAll()                                   ║
+  ║  4. Add function renderMyView() {}                              ║
   ║                                                                  ║
-  ║  SAFE PLACES TO ADD CODE:                                        ║
-  ║  • New utility functions: anywhere in <script>                   ║
-  ║  • New CSS classes: anywhere in <style>                          ║
-  ║  • New modals: add HTML + open/close functions                   ║
-  ║  • New reports: add render fn + button in reportsOverlay         ║
+  ║  NEW GANTT BAR ELEMENT:                                         ║
+  ║  1. Edit drawBar() or drawSummaryBar()                          ║
+  ║  2. ALWAYS use _ry/_rh — never i*ROW_H                         ║
+  ║     _ry = (rowY&&rowY[i]!=null) ? rowY[i] : i*ROW_H            ║
+  ║     _rh = (rowH&&rowH[i]!=null) ? rowH[i] : ROW_H              ║
+  ║  3. barY = _ry + Math.round((_rh - barH) / 2)   [F01 LOCK]    ║
   ║                                                                  ║
-  ║  NEVER DO:                                                       ║
-  ║  ✗ Remove position:relative from .task-row                       ║
-  ║  ✗ Add overflow:hidden to .task-row (clips drag handle)          ║
-  ║  ✗ Use i*ROW_H in drawBar/drawSummaryBar/drawMilestone           ║
-  ║  ✗ Add var(--col-status,...) back to grid-template-columns       ║
-  ║  ✗ Remove rowY/rowH params from draw function signatures         ║
-  ║  ✗ Replace getBoundingClientRect() with offsetTop for rowY       ║
-  ║  ✗ Add white-space:normal to .task-name .t-text without          ║
-  ║    also updating the row height measurement approach             ║
+  ║  NEW TASK FIELD:                                                 ║
+  ║  1. Add field to migrateTask() with ?? default                  ║
+  ║  2. Add UI in task modal HTML                                   ║
+  ║  3. Load in openTaskModal(), save in saveTaskFromModal()        ║
+  ║                                                                  ║
+  ║  NEW DEP TYPE (beyond FS/SS/FF/SF):                             ║
+  ║  1. Add anchor case in drawDepArrow()                           ║
+  ║  2. Call routeConnector() with correct exitDir/entryDir         ║
+  ║  3. Add color in TYPE_CLR                                       ║
+  ║  NEVER add a separate routing function — use routeConnector()   ║
+  ║                                                                  ║
+  ║  NEW THEME:                                                      ║
+  ║  1. Add entry to THEMES object in applyTheme()                  ║
+  ║  2. No CSS changes needed                                       ║
+  ║                                                                  ║
+  ║  NEW TASK COLUMN:                                               ║
+  ║  1. Update grid-template-columns in .tph-cols AND .task-row    ║
+  ║  2. Add header <div> in #tphCols                                ║
+  ║  3. Add cell in renderTaskList() row.innerHTML                  ║
+  ║  4. DO NOT remove position:relative from .task-row  [F10 LOCK] ║
+  ║                                                                  ║
   ╚══════════════════════════════════════════════════════════════════╝
 -->
+  ║                                                                  ║
 
 
-<style>
-#_syncBadge{position:fixed;bottom:14px;left:14px;z-index:9999;background:var(--card,#fff);border:1px solid var(--border,#ddd);border-radius:20px;padding:5px 12px;font-size:10px;font-weight:700;display:flex;align-items:center;gap:7px;box-shadow:0 2px 8px rgba(0,0,0,.12);cursor:pointer;font-family:monospace;color:var(--ink,#111);}
-#_syncDot{width:8px;height:8px;border-radius:50%;background:#6b7280;flex-shrink:0;transition:background .3s;}
-</style>
 <div id="_syncBadge" onclick="loadState()" title="Click to refresh from cloud"><span id="_syncDot"></span><span id="_syncLbl">☁ Loading…</span></div>
 </body>
 </html>
